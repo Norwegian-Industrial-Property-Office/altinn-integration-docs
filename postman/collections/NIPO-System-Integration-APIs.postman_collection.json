@@ -1,0 +1,496 @@
+{
+  "info": {
+    "_postman_id": "nipo-altinn-apis-001",
+    "name": "NIPO System Integration APIs (Altinn)",
+    "description": "# Norwegian Industrial Property Office - Altinn 3 APIs\n\nThis collection provides APIs for systems (fagsystem) to integrate with Patentstyret's Altinn 3 forms.\n\n## Setup\n\n1. **Import this collection** into Postman\n2. **Import an environment** (local, tt02, or production)\n3. **Configure credentials**:\n   - For TT02/Production: Authenticate via Maskinporten + Altinn token exchange (see [Authentication Guide](../docs/authentication-guide.md))\n   - For Local: Ensure app-localtest is running\n\n## Authentication Flow\n\n### Local\n1. Call \"Get Altinn Token (Local)\" to retrieve a test token\n2. Token is automatically stored in `bearerToken` environment variable\n\n### TT02/Production\n1. Obtain a Maskinporten token using your own client credentials\n2. Exchange it for an Altinn token via the platform exchange endpoint\n3. Set the token in `bearerToken` or use the \"Exchange Maskinporten Token\" request\n\nAll subsequent requests use the `bearerToken` automatically.\n\n## Available Forms\n\n- **Correspondence** - Submit inquiries related to IP cases\n- More forms available in respective folders\n\n## Documentation\n\n- [Authentication Guide](../docs/authentication-guide.md)\n- [API Prefill Implementation Guide](https://github.com/Norwegian-Industrial-Property-Office/altinnForms/blob/main/.github/api-prefill-implementation-guide.md)\n- [Altinn 3 API Documentation](https://docs.altinn.studio/api/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Get Altinn Token (Local)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const token = pm.response.text().trim().replace(/^\\\"+|\\\"+$/g, '');",
+                  "    pm.environment.set('bearerToken', token);",
+                  "    pm.test('Token retrieved and stored', function() {",
+                  "        pm.expect(token).to.have.length.above(50);",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Token request failed', function() {",
+                  "        pm.expect.fail('HTTP ' + pm.response.code);",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "14594268-c466-4675-b6e9-cd638f652077",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{tokenEndpoint}}?userId={{testUserId}}&authenticationLevel={{authLevel}}",
+              "host": ["{{tokenEndpoint}}"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{testUserId}}"
+                },
+                {
+                  "key": "authenticationLevel",
+                  "value": "{{authLevel}}"
+                }
+              ]
+            },
+            "description": "Retrieves a test user token for local development.\n\n**Prerequisites:**\n- app-localtest must be running on localhost:5005"
+          },
+          "response": []
+        },
+        {
+          "name": "Exchange Maskinporten Token for Altinn Token (TT02/Prod)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const token = pm.response.text().trim().replace(/^\\\"+|\\\"+$/g, '');",
+                  "    pm.environment.set('bearerToken', token);",
+                  "    pm.test('Altinn token retrieved and stored', function() {",
+                  "        pm.expect(token).to.have.length.above(50);",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Token exchange failed', function() {",
+                  "        pm.expect.fail('HTTP ' + pm.response.code);",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "e36fbda7-60a4-4799-a8f3-4f4d2c3cf4ae",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{maskinportenToken}}",
+                "description": "Your Maskinporten token"
+              }
+            ],
+            "url": {
+              "raw": "https://platform.tt02.altinn.no/authentication/api/v1/exchange/maskinporten",
+              "protocol": "https",
+              "host": ["platform", "tt02", "altinn", "no"],
+              "path": [
+                "authentication",
+                "api",
+                "v1",
+                "exchange",
+                "maskinporten"
+              ]
+            },
+            "description": "Exchanges a Maskinporten token for an Altinn Platform token.\n\nYou must first obtain a Maskinporten token using your own client credentials (JWT grant). Set it in the `maskinportenToken` environment variable, or paste it directly in the Authorization header.\n\n**Token exchange URLs:**\n- TT02: `https://platform.tt02.altinn.no/authentication/api/v1/exchange/maskinporten`\n- Production: `https://platform.altinn.no/authentication/api/v1/exchange/maskinporten`\n\nSee the [Authentication Guide](../docs/authentication-guide.md) for the full Maskinporten + System User setup."
+          },
+          "response": []
+        }
+      ],
+      "id": "16b13671-9656-4a60-91c2-3cf8f802056f",
+      "description": "Get bearer tokens for API authentication.\n\nRun the appropriate token request based on your environment:\n- **Local**: Uses test user token endpoint\n- **TT02/Production**: Use Maskinporten + Altinn token exchange (see [Authentication Guide](../docs/authentication-guide.md))"
+    },
+    {
+      "name": "2. Form Creation (Forms)",
+      "item": [
+        {
+          "name": "2. Correspondence (Henvendelse)",
+          "item": [
+            {
+              "name": "Create Instance with Prefill (JSON)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Instance created successfully', function() {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                      "});",
+                      "",
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.id) {",
+                      "        pm.environment.set('lastInstanceId', response.id);",
+                      "        console.log('Instance ID stored:', response.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "id": "fdb62f62-6643-442e-9d93-aa5d70bdd649",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "instance",
+                      "value": "{\"instanceOwner\":{\"partyId\":\"{{testPartyId}}\"}}",
+                      "contentType": "application/json",
+                      "type": "text",
+                      "description": "Instance metadata with party ID"
+                    },
+                    {
+                      "key": "correspondenceData-prefill",
+                      "value": "{\n  \"inquiryMessage\": \"This is a test inquiry about my trademark application status.\",\n  \"domain\": \"trademark\",\n  \"contactEmail\": \"test@example.com\",\n  \"contactName\": \"Test User\",\n  \"contactReference\": \"REF-2026-001\",\n  \"contactPhoneNumber\": \"+47 12345678\",\n  \"ipCases\": [\"202200912\"]\n}",
+                      "contentType": "application/json",
+                      "type": "text",
+                      "description": "Prefill data for the form"
+                    },
+                    {
+                      "key": "fileAttachment-OtherDocument",
+                      "type": "file",
+                      "description": "(Optional) Attach a document",
+                      "src": [],
+                      "disabled": true
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{org}}/correspondence/instances",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["{{org}}", "correspondence", "instances"]
+                },
+                "description": "Creates a new Correspondence form instance with prefilled data.\n\n## Prefill Fields\n\n| Field | Type | Required | Description |\n|-------|------|----------|-------------|\n| `domain` | string | Yes | `trademark`, `patent`, or `design` |\n| `inquiryMessage` | string | Yes | The inquiry text |\n| `ipCases` | array | No | List of case numbers |\n| `contactEmail` | string | No | Contact email |\n| `contactName` | string | No | Contact name |\n| `contactReference` | string | No | Your reference |\n| `contactPhoneNumber` | string | No | Contact phone |\n\n## Response\n\nReturns the created instance object with `id` for further operations."
+              },
+              "response": [
+                {
+                  "id": "3d158a15-34cf-4cd5-8d43-a8ecc8f572d6",
+                  "name": "Successful Creation",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "url": {
+                      "raw": ""
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "cookie": [],
+                  "body": "{\n  \"id\": \"51109100/abc123-def456-...\",\n  \"instanceOwner\": {\n    \"partyId\": \"51109100\"\n  },\n  \"data\": [\n    {\n      \"id\": \"data-element-guid\",\n      \"dataType\": \"correspondenceData\"\n    }\n  ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "Create Instance with Prefill (XML)",
+              "id": "2c266658-b28d-4763-a5a3-087c8effe8df",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "instance",
+                      "value": "{\"instanceOwner\":{\"partyId\":\"{{testPartyId}}\"}}",
+                      "contentType": "application/json",
+                      "type": "text"
+                    },
+                    {
+                      "key": "correspondenceData-prefill",
+                      "value": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<correspondenceData-prefill xmlns=\"urn:patentstyret:correspondence:prefill\">\n  <inquiryMessage>This is a test inquiry about my trademark.</inquiryMessage>\n  <domain>trademark</domain>\n  <contactEmail>test@example.com</contactEmail>\n  <contactName>Test User</contactName>\n  <ipCases>\n    <caseNumber>202200912</caseNumber>\n  </ipCases>\n</correspondenceData-prefill>",
+                      "contentType": "application/xml",
+                      "type": "text",
+                      "description": "Prefill data in XML format"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{org}}/correspondence/instances",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["{{org}}", "correspondence", "instances"]
+                },
+                "description": "Creates a new Correspondence form instance with XML prefill data.\n\nAlternative to JSON format for systems that prefer XML."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Instance",
+              "id": "8f5409d2-60fc-48f2-b702-62e10c33a7b4",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": [
+                    "{{org}}",
+                    "correspondence",
+                    "instances",
+                    "{{lastInstanceId}}"
+                  ]
+                },
+                "description": "Retrieves an existing instance by ID.\n\nUse the `lastInstanceId` from a previous create operation, or specify manually."
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Attachment",
+              "id": "d9d3cfbc-f9cf-421b-ab40-a5ebb74478f5",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}/data?dataType=fileAttachment-OtherDocument",
+                  "host": ["{{baseUrl}}"],
+                  "path": [
+                    "{{org}}",
+                    "correspondence",
+                    "instances",
+                    "{{lastInstanceId}}",
+                    "data"
+                  ],
+                  "query": [
+                    {
+                      "key": "dataType",
+                      "value": "fileAttachment-OtherDocument",
+                      "description": "Document type (see applicationmetadata.json for valid types)"
+                    }
+                  ]
+                },
+                "description": "Uploads an attachment to an existing instance.\n\n## Valid Document Types\n\n- `fileAttachment-OtherDocument` - General documents\n- `fileAttachment-PowerOfAttorney` - Power of attorney documents"
+              },
+              "response": []
+            }
+          ],
+          "id": "90410e2b-1ce5-4c04-b514-8e7b158de833",
+          "description": "APIs for the Correspondence form - submit inquiries related to IP cases (trademarks, patents, designs)."
+        }
+      ],
+      "id": "f9620dd9-1ecd-4478-8a73-664a16ef17d0"
+    },
+    {
+      "name": "4. Instance Management",
+      "item": [
+        {
+          "name": "List Instances for Party",
+          "id": "16752ec6-5c80-4f2e-a8e8-bb8e6f17941e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{org}}/correspondence/instances?instanceOwner.partyId={{testPartyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{org}}", "correspondence", "instances"],
+              "query": [
+                {
+                  "key": "instanceOwner.partyId",
+                  "value": "{{testPartyId}}"
+                }
+              ]
+            },
+            "description": "Lists all instances for a given party ID.\n\nChange the form name in the URL path to query different forms."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Instance",
+          "id": "6700d250-47d6-430c-87c3-12b864721a9d",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "{{org}}",
+                "correspondence",
+                "instances",
+                "{{lastInstanceId}}"
+              ]
+            },
+            "description": "Deletes an instance (only works for instances not yet completed)."
+          },
+          "response": []
+        }
+      ],
+      "id": "3c591186-a575-4a3f-9822-e4889cfbd3a0",
+      "description": "Generic instance management operations that work across all forms."
+    },
+    {
+      "name": "5. Options / Lookup APIs",
+      "item": [
+        {
+          "name": "Get IP Case Title",
+          "id": "opt-ipcasetitle-001",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/ipCaseTitle?caseId=202200912&domain=trademark",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "{{org}}",
+                "correspondence",
+                "api",
+                "options",
+                "ipCaseTitle"
+              ],
+              "query": [
+                {
+                  "key": "caseId",
+                  "value": "202200912",
+                  "description": "The IP case number to look up"
+                },
+                {
+                  "key": "domain",
+                  "value": "trademark",
+                  "description": "Domain: trademark, patent, or design"
+                }
+              ]
+            },
+            "description": "Looks up the title/name of an IP case by its case ID and domain.\n\n## Parameters\n\n| Parameter | Required | Description |\n|-----------|----------|-------------|\n| `caseId` | Yes | The case number (e.g., `202200912`) |\n| `domain` | Yes | One of: `trademark`, `patent`, `design` |\n\n## Response\n\nReturns the case title/name for display purposes."
+          },
+          "response": [
+            {
+              "id": "95c9cf99-d330-4c1f-bc0a-1eb2e8591da8",
+              "name": "Example Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": ""
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "cookie": [],
+              "body": "[\n  {\n    \"value\": \"202200912\",\n    \"label\": \"EXAMPLE TRADEMARK NAME\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Document Types",
+          "id": "opt-doctypes-001",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/doctypes?domainSelector=patent",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "{{org}}",
+                "correspondence",
+                "api",
+                "options",
+                "doctypes"
+              ],
+              "query": [
+                {
+                  "key": "domainSelector",
+                  "value": "patent",
+                  "description": "Domain: trademark, patent, or design"
+                }
+              ]
+            },
+            "description": "Retrieves the list of valid document types for a given domain.\n\n## Parameters\n\n| Parameter | Required | Description |\n|-----------|----------|-------------|\n| `domainSelector` | Yes | One of: `trademark`, `patent`, `design` |\n\n## Response\n\nReturns an array of document type options with `value` and `label` for each.\n\nUse these values when uploading attachments to specify the document type."
+          },
+          "response": [
+            {
+              "id": "60d9afc1-cc4d-47cc-a32e-d86ddca6ebe8",
+              "name": "Example Response (Patent)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": ""
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "cookie": [],
+              "body": "[\n  {\n    \"value\": \"claims\",\n    \"label\": \"Patent Claims\"\n  },\n  {\n    \"value\": \"description\",\n    \"label\": \"Description\"\n  },\n  {\n    \"value\": \"drawings\",\n    \"label\": \"Drawings\"\n  },\n  {\n    \"value\": \"other\",\n    \"label\": \"Other Document\"\n  }\n]"
+            }
+          ]
+        }
+      ],
+      "id": "fb897701-e4b2-4a4c-b3c2-d6226097babe",
+      "description": "Lookup APIs for retrieving case information and valid options.\n\nThese endpoints help systems validate data before form submission."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "// Checks if bearer token exists, warns if missing",
+          "const token = pm.environment.get('bearerToken');",
+          "if (!token && !pm.request.url.toString().includes('Token')) {",
+          "    console.warn('⚠️ No bearer token set. Run an authentication request first.');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "// Log response time for all requests",
+          "console.log('Response time: ' + pm.response.responseTime + 'ms');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "0d237a94-c395-49e2-922e-6bd9ad59d6ce",
+      "key": "lastInstanceId",
+      "value": "",
+      "type": "string",
+      "description": "Stores the last created instance ID for chained requests"
+    }
+  ]
+}

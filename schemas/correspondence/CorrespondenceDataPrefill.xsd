@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:patentstyret:correspondence:prefill"
+           xmlns:tns="urn:patentstyret:correspondence:prefill"
+           elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Simplified data model for consumers to prefill the Correspondence form via multipart instantiation.
+      Requestor is not included - it is automatically filled from the logged-in user via ER/DSF registers.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Root Element -->
+  <xs:element name="correspondenceData-prefill" type="tns:CorrespondenceDataPrefillType"/>
+
+  <!-- Root Type -->
+  <xs:complexType name="CorrespondenceDataPrefillType">
+    <xs:sequence>
+      <xs:element name="inquiryMessage" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Content of message or inquiry from customer. Free text.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="domain" type="tns:DomainType">
+        <xs:annotation>
+          <xs:documentation>Concerned field of expertise.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactEmail" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>E-mail address of relevant contact person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Name of relevant contact person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactReference" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Customer's case reference number identifying the concerned case in their own system.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactPhoneNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Phone number of relevant contact person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ipCases" type="tns:IpCasesType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>List of IP case identifiers (application numbers, IP right numbers, etc.)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Domain Enumeration Type -->
+  <xs:simpleType name="DomainType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="trademark"/>
+      <xs:enumeration value="design"/>
+      <xs:enumeration value="patent"/>
+      <xs:enumeration value="other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- IpCases Array Type -->
+  <xs:complexType name="IpCasesType">
+    <xs:sequence>
+      <xs:element name="ipCase" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>IP case identifier (application number, IP right number, etc.)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

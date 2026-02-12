@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "CorrespondenceDataPrefill.schema.json",
+  "title": "correspondenceData-prefill",
+  "description": "Simplified data model for consumers to prefill the Correspondence form via multipart instantiation. Requestor is not included - it is automatically filled from the logged-in user via ER/DSF registers.",
+  "type": "object",
+  "required": ["inquiryMessage", "domain", "contactEmail"],
+  "properties": {
+    "inquiryMessage": {
+      "type": "string",
+      "description": "Content of message or inquiry from customer. Free text."
+    },
+    "domain": {
+      "type": "string",
+      "description": "Concerned field of expertise. Valid values: trademark, design, patent, other",
+      "enum": ["trademark", "design", "patent", "other"]
+    },
+    "contactEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "E-mail address of relevant contact person."
+    },
+    "contactName": {
+      "type": "string",
+      "description": "Name of relevant contact person."
+    },
+    "contactReference": {
+      "type": "string",
+      "description": "Customer's case reference number identifying the concerned case in their own system."
+    },
+    "contactPhoneNumber": {
+      "type": "string",
+      "description": "Phone number of relevant contact person."
+    },
+    "ipCases": {
+      "type": "array",
+      "description": "List of IP case identifiers (application numbers, IP right numbers, etc.)",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
