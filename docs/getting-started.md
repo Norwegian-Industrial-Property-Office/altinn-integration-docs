@@ -104,4 +104,5 @@ After logging in, the party ID is visible in the URL (e.g., `.../party/51489923/
 | `404 Not Found` | Check that LocalTest is running and the app is registered |
 | Docker issues | Ensure Docker Desktop is running |
 | Token expired | Tokens are short-lived locally; re-authenticate |
+| `ContentTypeNotAllowed` error on file upload | Set `Content-Type` to the file's actual MIME type (e.g., `application/pdf`). `application/octet-stream` is **not** accepted. Include `Content-Disposition: attachment; filename="yourfile.pdf"; filename*=UTF-8''yourfile.pdf`. Send raw file bytes as the body — not multipart form-data. See [Altinn Data Elements API](https://docs.altinn.studio/en/api/apps/data-elements/#uploading-an-attachment). |
 
