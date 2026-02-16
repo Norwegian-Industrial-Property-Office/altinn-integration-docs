@@ -18,19 +18,19 @@
     "contactEmail": {
       "type": "string",
       "format": "email",
-      "description": "E-mail address of relevant contact person."
+      "description": "E-mail address of contact person."
     },
     "contactName": {
       "type": "string",
-      "description": "Name of relevant contact person."
+      "description": "Name of contact person."
     },
     "contactReference": {
       "type": "string",
-      "description": "Customer's case reference number identifying the concerned case in their own system."
+      "description": "Customer's case reference number from NIPO"
     },
     "contactPhoneNumber": {
       "type": "string",
-      "description": "Phone number of relevant contact person."
+      "description": "Phone number of contact person."
     },
     "ipCases": {
       "type": "array",

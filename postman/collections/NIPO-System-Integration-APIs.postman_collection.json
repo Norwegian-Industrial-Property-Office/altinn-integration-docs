@@ -41,7 +41,9 @@
             "header": [],
             "url": {
               "raw": "{{tokenEndpoint}}?userId={{testUserId}}&authenticationLevel={{authLevel}}",
-              "host": ["{{tokenEndpoint}}"],
+              "host": [
+                "{{tokenEndpoint}}"
+              ],
               "query": [
                 {
                   "key": "userId",
@@ -96,7 +98,12 @@
             "url": {
               "raw": "https://platform.tt02.altinn.no/authentication/api/v1/exchange/maskinporten",
               "protocol": "https",
-              "host": ["platform", "tt02", "altinn", "no"],
+              "host": [
+                "platform",
+                "tt02",
+                "altinn",
+                "no"
+              ],
               "path": [
                 "authentication",
                 "api",
@@ -174,8 +181,14 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["{{org}}", "correspondence", "instances"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{org}}",
+                    "correspondence",
+                    "instances"
+                  ]
                 },
                 "description": "Creates a new Correspondence form instance with prefilled data.\n\n## Prefill Fields\n\n| Field | Type | Required | Description |\n|-------|------|----------|-------------|\n| `domain` | string | Yes | `trademark`, `patent`, or `design` |\n| `inquiryMessage` | string | Yes | The inquiry text |\n| `ipCases` | array | No | List of case numbers |\n| `contactEmail` | string | No | Contact email |\n| `contactName` | string | No | Contact name |\n| `contactReference` | string | No | Your reference |\n| `contactPhoneNumber` | string | No | Contact phone |\n\n## Response\n\nReturns the created instance object with `id` for further operations."
               },
@@ -224,8 +237,14 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["{{org}}", "correspondence", "instances"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{org}}",
+                    "correspondence",
+                    "instances"
+                  ]
                 },
                 "description": "Creates a new Correspondence form instance with XML prefill data.\n\nAlternative to JSON format for systems that prefer XML."
               },
@@ -239,7 +258,9 @@
                 "header": [],
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "{{org}}",
                     "correspondence",
@@ -269,7 +290,9 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}/data?dataType=fileAttachment-OtherDocument",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "{{org}}",
                     "correspondence",
@@ -307,8 +330,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/{{org}}/correspondence/instances?instanceOwner.partyId={{testPartyId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["{{org}}", "correspondence", "instances"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{org}}",
+                "correspondence",
+                "instances"
+              ],
               "query": [
                 {
                   "key": "instanceOwner.partyId",
@@ -328,7 +357,9 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}",
-              "host": ["{{baseUrl}}"],
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": [
                 "{{org}}",
                 "correspondence",
@@ -348,56 +379,6 @@
       "name": "5. Options / Lookup APIs",
       "item": [
         {
-          "name": "Get IP Case Title",
-          "id": "opt-ipcasetitle-001",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/ipCaseTitle?caseId=202200912&domain=trademark",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "{{org}}",
-                "correspondence",
-                "api",
-                "options",
-                "ipCaseTitle"
-              ],
-              "query": [
-                {
-                  "key": "caseId",
-                  "value": "202200912",
-                  "description": "The IP case number to look up"
-                },
-                {
-                  "key": "domain",
-                  "value": "trademark",
-                  "description": "Domain: trademark, patent, or design"
-                }
-              ]
-            },
-            "description": "Looks up the title/name of an IP case by its case ID and domain.\n\n## Parameters\n\n| Parameter | Required | Description |\n|-----------|----------|-------------|\n| `caseId` | Yes | The case number (e.g., `202200912`) |\n| `domain` | Yes | One of: `trademark`, `patent`, `design` |\n\n## Response\n\nReturns the case title/name for display purposes."
-          },
-          "response": [
-            {
-              "id": "95c9cf99-d330-4c1f-bc0a-1eb2e8591da8",
-              "name": "Example Response",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": ""
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "cookie": [],
-              "body": "[\n  {\n    \"value\": \"202200912\",\n    \"label\": \"EXAMPLE TRADEMARK NAME\"\n  }\n]"
-            }
-          ]
-        },
-        {
           "name": "Get Document Types",
           "id": "opt-doctypes-001",
           "request": {
@@ -405,7 +386,9 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/doctypes?domainSelector=patent",
-              "host": ["{{baseUrl}}"],
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": [
                 "{{org}}",
                 "correspondence",
@@ -439,6 +422,57 @@
               "_postman_previewlanguage": "json",
               "cookie": [],
               "body": "[\n  {\n    \"value\": \"claims\",\n    \"label\": \"Patent Claims\"\n  },\n  {\n    \"value\": \"description\",\n    \"label\": \"Description\"\n  },\n  {\n    \"value\": \"drawings\",\n    \"label\": \"Drawings\"\n  },\n  {\n    \"value\": \"other\",\n    \"label\": \"Other Document\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get countries",
+          "id": "5b22f463-a8a2-42e0-a6ec-0000b81efd6b",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/countries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{org}}",
+                "correspondence",
+                "api",
+                "options",
+                "countries"
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a3e0a474-e09d-4e72-ba12-894ecc1ec647",
+              "name": "Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/countries",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{org}}",
+                    "correspondence",
+                    "api",
+                    "options",
+                    "countries"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "responseTime": "2026-02-16T09:09:19.830Z",
+              "body": null
             }
           ]
         }

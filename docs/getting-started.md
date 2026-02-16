@@ -1,6 +1,6 @@
 # Getting Started: Correspondence API Integration
 
-This guide walks you through testing the Correspondence (Henvendelse) API — first locally, then in the TT02 test environment.
+This guide walks you through testing the Correspondence (Korrespodanse) API — first locally, then in the TT02 test environment.
 
 For API details, prefill fields, and file attachment types, see the [Swagger UI](../README.md#-swagger--openapi).  
 For data model schemas, see [`schemas/correspondence/`](../schemas/correspondence/).
@@ -16,7 +16,6 @@ Follow the official Altinn guides to set up your local development environment:
 
 ### Correspondence App
 
-Clone and run the Correspondence app:
 
 ```bash
 git clone https://altinn.studio/repos/pat/correspondence.git
@@ -30,7 +29,7 @@ Once running, explore the API via Swagger UI: **http://local.altinn.cloud/pat/co
 
 ## 2. Import Postman Collection
 
-Import the collection and local environment into Postman. See the [Postman README](../postman/README.md) for setup instructions and environment variables.
+Import the collection and local environment into Postman. See the [Postman README](../postman/README.md)
 
 ---
 
@@ -42,11 +41,23 @@ Run **"1. Authentication > Get Altinn Token (Local)"** in Postman.
 
 This calls the local test token endpoint and automatically stores the token. You can also open local.altinn.cloud and click Tokens.
 
-### Step 2: Create a Form Instance
+### Step 2: Look Up Valid Document Types for Attachments
+
+Before attaching files, you need to know the correct document type key for your domain. Use the **"5. Options / Lookup APIs > Get Document Types"** request in Postman, or call the endpoint directly:
+
+```
+GET {{baseUrl}}/{{org}}/correspondence/api/options/doctypes?domainSelector=patent
+```
+
+Pass `trademark`, `patent`, or `design` as the `domainSelector` parameter. The response returns the valid attachment types for that domain:
+
+Use the `value` directly as the multipart form key when attaching files (e.g., `fileAttachment-MainLetter`).
+
+### Step 3: Create a Form Instance
 
 Run **"2. Correspondence > Create Instance with Prefill (JSON)"**
 
-### Step 3: Verify in Browser
+### Step 4: Verify in Browser
 
 The response includes a `selfLinks.apps` URL. To open the form in a browser, replace `/instances/` with `/#/instance/`:
 
