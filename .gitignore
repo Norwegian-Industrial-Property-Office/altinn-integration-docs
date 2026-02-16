@@ -16,6 +16,7 @@ Thumbs.db
 
 # Postman workspace files (local only)
 *.postman_workspace.json
+.postman/
 
 # Backup files
 *.bak
