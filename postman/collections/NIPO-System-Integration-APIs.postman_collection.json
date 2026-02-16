@@ -312,17 +312,17 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/{{org}}/correspondence/instances?instanceOwner.partyId={{testPartyId}}",
+              "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{testPartyId}}/active",
               "host": ["{{baseUrl}}"],
-              "path": ["{{org}}", "correspondence", "instances"],
-              "query": [
-                {
-                  "key": "instanceOwner.partyId",
-                  "value": "{{testPartyId}}"
-                }
+              "path": [
+                "{{org}}",
+                "correspondence",
+                "instances",
+                "{{testPartyId}}",
+                "active"
               ]
             },
-            "description": "Lists all instances for a given party ID.\n\nChange the form name in the URL path to query different forms."
+            "description": "Lists active instances for a given party ID.\n\nUses the App API endpoint `/{org}/{app}/instances/{partyId}/active`."
           },
           "response": []
         },
