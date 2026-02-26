@@ -98,3 +98,25 @@ Completing the form submission (advancing through the process to final submissio
 
 - [Altinn Studio Instance Documentation](https://docs.altinn.studio/nb/api/apps/instances/)
 - [Altinn App API OpenAPI Spec](https://docs.altinn.studio/en/api/apps/spec/)
+
+## Getting Started with Postman
+
+A Postman collection is available to help you quickly test the Correspondence form integration. The collection includes pre-configured requests for:
+
+- Authentication (ID-porten and Maskinporten token exchange)
+- Creating instances with prefill data
+- Uploading attachments
+- Validating instances
+
+**To use the collection:**
+
+1. Download the Correspondence Postman collection from the [postman/](postman) directory
+2. Import it into Postman
+3. Set up environment variables:
+    - `basePath` - Your environment URL (`https://pat.apps.tt02.altinn.no` for test)
+    - `altinnToken` - Your Altinn Runtime Token
+    - `instanceOwnerPartyId` - Your party ID
+4. Run requests in sequence to create and manage instances
+
+
+
