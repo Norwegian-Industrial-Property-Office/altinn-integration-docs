@@ -101,7 +101,7 @@ Completing the form submission (advancing through the process to final submissio
 
 ## Getting Started with Postman
 
-A Postman collection is available to help you quickly test the Correspondence form integration. The collection includes pre-configured requests for:
+An sample Postman collection is available to demonstrate a typical flow using the Correspondence schema. This collection serves as a reference and includes pre-configured requests for:
 
 - Authentication (ID-porten and Maskinporten token exchange)
 - Creating instances with prefill data

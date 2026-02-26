@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "18f584cb-ca30-44cc-9e18-8716bd0aeebf",
-    "name": "NIPO System Integration APIs (Altinn)",
-    "description": "# Norwegian Industrial Property Office - Altinn 3 APIs\n\nThis collection provides APIs for systems (fagsystem) to integrate with Patentstyret's Altinn 3 forms.\n\n## Setup\n\n1. **Import this collection** into Postman\n    \n2. **Import an environment** (local, tt02, or production)\n    \n3. **Configure credentials**:\n    - For TT02/Production: Authenticate via Maskinporten + Altinn token exchange (see [Authentication Guide](https://../docs/authentication-guide.md))\n        \n    - For Local: Ensure app-localtest is running\n        \n\n## Authentication Flow\n\n### Local\n\n1. Call \"Get Altinn Token (Local)\" to retrieve a test token\n    \n2. Token is automatically stored in `bearerToken` environment variable\n    \n\n### TT02/Production\n\n1. Obtain a Maskinporten token using your own client credentials\n    \n2. Exchange it for an Altinn token via the platform exchange endpoint\n    \n3. Set the token in `bearerToken` or use the \"Exchange Maskinporten Token\" request\n    \n\nAll subsequent requests use the `bearerToken` automatically.\n\n## Available Forms\n\n- **Correspondence** - Submit inquiries related to IP cases\n    \n- more forms coming d",
+    "name": "[Example] NIPO System Integration APIs (Altinn)",
+    "description": "# Norwegian Industrial Property Office - Altinn 3 APIs\n\nThis collection provides sample APIs using our Correspondence form to showcase how end user systems can integrate with Patentstyret's Altinn 3 forms.\n\n## Setup\n\n1. **Import this collection** into Postman\n    \n2. **Import an environment** (local, tt02, or production)\n    \n3. **Configure credentials**:\n    - For TT02/Production: Authenticate via Maskinporten + Altinn token exchange (see [Authentication Guide](https://../docs/authentication-guide.md))\n        \n    - For Local: Ensure app-localtest is running\n        \n\n## Authentication Flow\n\n### Local\n\n1. Call \"Get Altinn Token (Local)\" to retrieve a test token\n    \n2. Token is automatically stored in `bearerToken` environment variable\n    \n\n### TT02/Production\n\n1. Obtain a Maskinporten token using your own client credentials\n    \n2. Exchange it for an Altinn token via the platform exchange endpoint\n    \n3. Set the token in `bearerToken` or use the \"Exchange Maskinporten Token\" request\n    \n\nAll subsequent requests use the `bearerToken` automatically.\n\n",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -42,9 +42,7 @@
             "header": [],
             "url": {
               "raw": "{{tokenEndpoint}}?userId={{testUserId}}&authenticationLevel={{authLevel}}",
-              "host": [
-                "{{tokenEndpoint}}"
-              ],
+              "host": ["{{tokenEndpoint}}"],
               "query": [
                 {
                   "key": "userId",
@@ -100,12 +98,7 @@
             "url": {
               "raw": "https://platform.tt02.altinn.no/authentication/api/v1/exchange/maskinporten",
               "protocol": "https",
-              "host": [
-                "platform",
-                "tt02",
-                "altinn",
-                "no"
-              ],
+              "host": ["platform", "tt02", "altinn", "no"],
               "path": [
                 "authentication",
                 "api",
@@ -184,14 +177,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "{{org}}",
-                    "correspondence",
-                    "instances"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["{{org}}", "correspondence", "instances"]
                 },
                 "description": "Creates a new Correspondence form instance with prefilled data.\n\n## Prefill Fields\n\n| Field | Type | Required | Description |\n|-------|------|----------|-------------|\n| `domain` | string | Yes | `trademark`, `patent`, or `design` |\n| `inquiryMessage` | string | Yes | The inquiry text |\n| `ipCases` | array | No | List of case numbers |\n| `contactEmail` | string | No | Contact email |\n| `contactName` | string | No | Contact name |\n| `contactReference` | string | No | Your reference |\n| `contactPhoneNumber` | string | No | Contact phone |\n\n## Response\n\nReturns the created instance object with `id` for further operations."
               },
@@ -241,14 +228,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "{{org}}",
-                    "correspondence",
-                    "instances"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["{{org}}", "correspondence", "instances"]
                 },
                 "description": "Creates a new Correspondence form instance with XML prefill data.\n\nAlternative to JSON format for systems that prefer XML."
               },
@@ -262,9 +243,7 @@
                 "header": [],
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "{{org}}",
                     "correspondence",
@@ -299,9 +278,7 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}/data?dataType=fileAttachment-MainLetter",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "{{org}}",
                     "correspondence",
@@ -330,9 +307,7 @@
                 "header": [],
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/doctypes?domainSelector=patent",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "{{org}}",
                     "correspondence",
@@ -378,9 +353,7 @@
                 "header": [],
                 "url": {
                   "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/countries",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "{{org}}",
                     "correspondence",
@@ -399,9 +372,7 @@
                     "header": [],
                     "url": {
                       "raw": "{{baseUrl}}/{{org}}/correspondence/api/options/countries",
-                      "host": [
-                        "{{baseUrl}}"
-                      ],
+                      "host": ["{{baseUrl}}"],
                       "path": [
                         "{{org}}",
                         "correspondence",
@@ -439,9 +410,7 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{testPartyId}}/active",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "{{org}}",
                 "correspondence",
@@ -462,9 +431,7 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/{{org}}/correspondence/instances/{{lastInstanceId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "{{org}}",
                 "correspondence",
