@@ -1,0 +1,362 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "VaremerkeDataPrefill.schema.json",
+  "title": "varemerkeData-prefill",
+  "description": "JSON schema for API-based prefill during varemerke multipart instantiation.",
+  "type": "object",
+  "required": [
+    "contactEmail",
+    "agentOrApplicant",
+    "trademarkType",
+    "contactName",
+    "category",
+    "paymentMethod",
+    "goodsAndServices",
+    "applicants"
+  ],
+  "properties": {
+    "category": {
+      "type": "string",
+      "description": "Trademark category."
+    },
+    "trademarkType": {
+      "$ref": "#/$defs/varemerkeTrademarkType",
+      "description": "Trademark type. Use one of the supported external trademark type values."
+    },
+    "agentOrApplicant": {
+      "$ref": "#/$defs/varemerkeAgentOrApplicant",
+      "description": "Specifies whether the submitter acts as the applicant or as an agent."
+    },
+    "contactEmail": {
+      "type": "string",
+      "description": "Contact email address."
+    },
+    "contactName": {
+      "type": "string",
+      "description": "Contact person name."
+    },
+    "contactReference": {
+      "type": "string",
+      "description": "Customer reference for the submission."
+    },
+    "contactPhoneNumber": {
+      "type": "string",
+      "description": "Contact phone number."
+    },
+    "agentCustomerNumber": {
+      "type": "string",
+      "description": "Optional customer number for the submitting agent. When provided, it is mapped to the agent in the form model."
+    },
+    "paymentMethod": {
+      "$ref": "#/$defs/varemerkePaymentMethod",
+      "description": "Preferred payment method."
+    },
+    "trademarkText": {
+      "type": "string",
+      "description": "Trademark text."
+    },
+    "trademarkDetails": {
+      "type": "string",
+      "description": "Additional trademark details."
+    },
+    "applicants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/varemerkeApplicantPrefill"
+      },
+      "description": "Applicants included in the prefill payload."
+    },
+    "goodsAndServices": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/varemerkeGoodsAndServicesPrefill"
+      },
+      "description": "Goods and services included in the prefill payload."
+    },
+    "priorityType": {
+      "$ref": "#/$defs/varemerkePriorityType",
+      "description": "Selects which priority claim type is included in the payload."
+    },
+    "priorities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/varemerkePriorityPrefill"
+      },
+      "description": "Earlier application priority claims."
+    },
+    "earlierExhibition": {
+      "$ref": "#/$defs/varemerkeEarlierExhibitionPrefill",
+      "description": "Earlier exhibition priority claim."
+    },
+    "conversion": {
+      "$ref": "#/$defs/varemerkeConversionPrefill",
+      "description": "Conversion priority claim."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "priorityType": {
+            "const": "earlierApplication"
+          }
+        },
+        "required": ["priorityType"]
+      },
+      "then": {
+        "required": ["priorities"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "priorityType": {
+            "const": "earlierExhibition"
+          }
+        },
+        "required": ["priorityType"]
+      },
+      "then": {
+        "required": ["earlierExhibition"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "priorityType": {
+            "const": "conversion"
+          }
+        },
+        "required": ["priorityType"]
+      },
+      "then": {
+        "required": ["conversion"]
+      }
+    }
+  ],
+  "$defs": {
+    "varemerkePriorityType": {
+      "type": "string",
+      "enum": ["earlierApplication", "earlierExhibition", "conversion"],
+      "description": "Supported priority claim types."
+    },
+    "varemerkeAgentOrApplicant": {
+      "type": "string",
+      "enum": ["applicant", "agent"],
+      "description": "Chooses whether the submitter is the applicant or an agent submitting on behalf of the applicant."
+    },
+    "varemerkePaymentMethod": {
+      "type": "string",
+      "enum": ["masterCard", "visa", "invoice"],
+      "description": "Supported payment methods for the application."
+    },
+    "varemerkeTrademarkType": {
+      "type": "string",
+      "enum": [
+        "word",
+        "figurative",
+        "combined",
+        "threeDimensional",
+        "hologram",
+        "sound",
+        "pattern",
+        "position",
+        "multimedia",
+        "color",
+        "moving"
+      ],
+      "description": "Supported external trademark type values. These are mapped to the app's internal trademark codes during prefill processing."
+    },
+    "varemerkeApplicantRole": {
+      "type": "string",
+      "enum": ["person", "org"],
+      "description": "Applicant role, either a person or an organization."
+    },
+    "varemerkeApplicantPrefill": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/varemerkeApplicantRole"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "companyNumber": {
+          "type": "string"
+        },
+        "streetAddress": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "Find list of approved countrycodes using options: countries"
+        }
+      },
+      "required": ["streetAddress", "postalCode", "city", "country"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "org"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["companyName"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "org"
+              },
+              "country": {
+                "enum": ["NO", "Norway"]
+              }
+            },
+            "required": ["role", "country"]
+          },
+          "then": {
+            "required": ["companyNumber"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "person"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["firstName", "lastName"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "niceClassNumber": {
+      "type": "integer",
+      "anyOf": [{ "minimum": 1, "maximum": 45 }, { "const": 99 }],
+      "description": "Nice classification number (1–45) or 99 for undefined class."
+    },
+    "varemerkeGoodsAndServicesPrefill": {
+      "type": "object",
+      "properties": {
+        "classNumber": {
+          "$ref": "#/$defs/niceClassNumber"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": ["classNumber"],
+      "additionalProperties": false
+    },
+    "varemerkePriorityPrefill": {
+      "type": "object",
+      "properties": {
+        "applicationNumber": {
+          "type": "string"
+        },
+        "priorityDate": {
+          "type": "string",
+          "description": "format: YYYY-MM-DD"
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "Find list of approved countrycodes using options: priorityCountries"
+        },
+        "allProducts": {
+          "type": "boolean",
+          "description": "false requires classNumbers and products."
+        },
+        "classNumbers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/niceClassNumber"
+          },
+          "description": "Class numbers must also exist in goodsAndServices."
+        },
+        "products": {
+          "type": "string",
+          "description": "Required when allProducts is false."
+        }
+      },
+      "required": ["applicationNumber", "priorityDate", "countryCode"],
+      "additionalProperties": false
+    },
+    "varemerkeEarlierExhibitionPrefill": {
+      "type": "object",
+      "properties": {
+        "caseName": {
+          "type": "string"
+        },
+        "caseDate": {
+          "type": "string",
+          "description": "Recommended format: YYYY-MM-DD"
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "Find list of approved countrycodes using options: priorityCountries"
+        },
+        "allProducts": {
+          "type": "boolean",
+          "description": "false requires classNumbers and products."
+        },
+        "classNumbers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/niceClassNumber"
+          },
+          "description": "Class numbers must also exist in goodsAndServices."
+        },
+        "products": {
+          "type": "string",
+          "description": "Required when allProducts is false."
+        }
+      },
+      "required": ["caseName", "caseDate", "countryCode"],
+      "additionalProperties": false
+    },
+    "varemerkeConversionPrefill": {
+      "type": "object",
+      "properties": {
+        "internationalRegistrationNumber": {
+          "type": "string"
+        },
+        "internationalDischargeDate": {
+          "type": "string",
+          "description": "format: YYYY-MM-DD"
+        },
+        "priorityDate": {
+          "type": "string",
+          "description": "format: YYYY-MM-DD"
+        }
+      },
+      "required": [
+        "internationalRegistrationNumber",
+        "internationalDischargeDate",
+        "priorityDate"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

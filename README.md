@@ -27,12 +27,12 @@ These forms are standard Altinn 3 applications. For general integration patterns
 
 Each form has a unique prefill data model used when creating instances. The prefill data is automatically mapped to the actual form fields.
 
-| Form                  | Prefill Field Name           | Swagger (TT02)                                                                | Swagger (Prod)                                                           | Prefill Schema                                                                                                               | Details                       |
-| --------------------- | ---------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------|
-| Correspondence        | `correspondenceData-prefill` | [TT02](https://pat.apps.tt02.altinn.no/pat/correspondence/swagger/index.html) | [Prod](https://pat.apps.altinn.no/pat/correspondence/swagger/index.html) | [JSON](docs/correspondence/CorrespondenceDataPrefill.schema.json) / [XSD](docs/correspondence/CorrespondenceDataPrefill.xsd) | [Docs](docs/correspondence/)  |
-| Patent                | `patentData-prefill`         | [TT02](https://pat.apps.tt02.altinn.no/pat/patent/swagger/index.html)         | [Prod](https://pat.apps.altinn.no/pat/patent/swagger/index.html)         | Coming soon                                                                                                                  | [Docs](docs/patent/)          |
-| Design                | `designData-prefill`         | [TT02](https://pat.apps.tt02.altinn.no/pat/design/swagger/index.html)         | [Prod](https://pat.apps.altinn.no/pat/design/swagger/index.html)         | Coming soon                                                                                                                  | [Docs](docs/design/)          |
-| Varemerke (Trademark) | `varemerkeData-prefill`      | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html)      | [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)      | Coming soon                                                                                                                  | [Docs](docs/varemerke/)       |
+| Form                  | `{{app}}`         | Swagger                                                                                                                                                                            | Prefill Schema Field Name           | Prefill Schema                                                                                                               | Details                       |
+| --------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------|
+| Correspondence        | `correspondence`  | [TT02](https://pat.apps.tt02.altinn.no/pat/correspondence/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/correspondence/swagger/index.html)                         | `correspondenceData-prefill` | [JSON](docs/correspondence/CorrespondenceDataPrefill.schema.json) ([XSD](docs/correspondence/CorrespondenceDataPrefill.xsd)) | [Docs](docs/correspondence/)  |
+| Patent                | `patent`          | [TT02](https://pat.apps.tt02.altinn.no/pat/patent/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/patent/swagger/index.html)                                       | `patentData-prefill`         | Coming soon                                                                                                                  | [Docs](docs/patent/)          |
+| Design                | `design`          | [TT02](https://pat.apps.tt02.altinn.no/pat/design/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/design/swagger/index.html)                                       | `designData-prefill`         | Coming soon                                                                                                                  | [Docs](docs/design/)          |
+| Trademark             | `varemerke`       | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)                                 | `varemerkeData-prefill`      | [JSON](docs/varemerke/VaremerkeDataPrefill.schema.json) ([XSD](docs/varemerke/VaremerkeDataPrefill.xsd))                   | [Docs](docs/varemerke/)       |
 
 ## Creating Instances with Prefill Data
 
@@ -47,7 +47,7 @@ To create an instance with prefill data, use a `multipart/form-data` request. Th
 
 ### Example: Creating a Correspondence Instance
 
-The following example creates a Correspondence form instance with prefill data and attachments:
+The following example creates a Correspondence form instance using multipart instantiation with prefill data and attachments:
 
 ```http
 POST {{basePath}}/pat/correspondence/instances
