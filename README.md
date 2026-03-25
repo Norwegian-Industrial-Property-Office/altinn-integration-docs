@@ -34,20 +34,24 @@ Each form has a unique prefill data model used when creating instances. The pref
 | Design                | `design`          | [TT02](https://pat.apps.tt02.altinn.no/pat/design/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/design/swagger/index.html)                                       | `designData-prefill`         | Coming soon                                                                                                                  | [Docs](docs/design/)          |
 | Trademark             | `varemerke`       | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)                                 | `varemerkeData-prefill`      | [JSON](docs/varemerke/VaremerkeDataPrefill.schema.json) ([XSD](docs/varemerke/VaremerkeDataPrefill.xsd))                   | [Docs](docs/varemerke/README.md)       |
 
-> **Note:** Where both JSON Schema and XSD are provided, the **JSON Schema is the authoritative source**. The XSD is provided for documentation and XML-oriented tooling but does not express all conditional validation rules (e.g., role-dependent required fields). Always validate against the JSON Schema.
+> **Note:** the **JSON Schema is the authoritative source**. The XSD is provided for documentation and XML-oriented tooling but does not express all conditional validation rules (e.g., role-dependent required fields). Always validate against the JSON Schema.
 
 ## Creating Instances with Prefill Data
 
 To create an instance with prefill data, use a `multipart/form-data` request. This follows the standard Altinn 3 instantiation pattern (see [Altinn Instances API docs](https://docs.altinn.studio/en/api/apps/instances/#create-instance)).
 
-The `{{app}}Data-prefill` and `instance` parts must have `Content-Type: application/json`. They can be sent either as inline text or as a file
-
 **Template variables used in examples:**
-- `{{basePath}}` - The environment base URL (e.g., `https://pat.apps.tt02.altinn.no`)
-- `{{app}}` - See table for form names
-- `{{instanceOwnerPartyId}}` - The party ID from the instance creation response
-- `{{instanceGuid}}` - The instance GUID from the instance creation response
-- `{{altinnToken}}` - Your Altinn Runtime Token (see Authentication section above)
+
+| Variable | Description |
+|----------|-------------|
+| `{{basePath}}` | The environment base URL (e.g., `https://pat.apps.tt02.altinn.no`) |
+| `{{app}}` | See table for form names |
+| `{{instanceOwnerPartyId}}` | The party ID from the instance creation response |
+| `{{instanceGuid}}` | The instance GUID from the instance creation response |
+| `{{altinnToken}}` | Your Altinn Runtime Token (see Authentication section above) |
+
+
+The `{{app}}Data-prefill` and `instance` parts must have `Content-Type: application/json`. They can be sent either as inline text or as a file
 
 ### Example: Creating a Correspondence Instance
 

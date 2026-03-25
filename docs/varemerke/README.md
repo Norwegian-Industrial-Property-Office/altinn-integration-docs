@@ -1,9 +1,5 @@
 # Varemerke (Trademark)
 
-## Prefill Field Name
-
-When creating an instance via multipart/form-data, use the field name: **`varemerkeData-prefill`**
-
 ## Prefill Schema
 
 The varemerke prefill payload is sent as the `varemerkeData-prefill` multipart part with content type `application/json`.
@@ -11,12 +7,7 @@ The varemerke prefill payload is sent as the `varemerkeData-prefill` multipart p
 Available schema files:
 
 - [JSON Schema](VaremerkeDataPrefill.schema.json)
-- [XSD](VaremerkeDataPrefill.xsd)
-
-
-Notes:
-- Use Swagger as the source for attachment field names, allowed MIME types, and file-count limits
-- Use this repository as the source for the prefill data model
+- ( [XSD](VaremerkeDataPrefill.xsd) )
 
 ## Attachments
 
@@ -28,6 +19,7 @@ Each attachment part must:
 - Include a `Content-Type` header matching the file's actual MIME type, since the app validates MIME type
 - Include a `filename` in the `Content-Disposition` header
 - Contain the binary file content as the part body
+>Note: Use Swagger as the source for attachment field names, allowed MIME types, and file-count limits
 
 ## Country Codes
 
@@ -51,7 +43,6 @@ For users who do not have a Norwegian national identity number or organization n
 To populate the Requestor with actual name and address data, include a `submitter` object in the prefill payload:
 
 Notes:
-
 - The `submitter` object is optional. Without it, the Requestor fields will be blank for self-identified users.
 - `submitter.customerNumber` is optional and sets the customer number directly without a SANT lookup.
 - The `submitter` uses the same field structure as applicants (role, name, address) — see the JSON schema for details.
