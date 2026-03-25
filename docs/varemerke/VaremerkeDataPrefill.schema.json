@@ -29,6 +29,7 @@
     },
     "contactEmail": {
       "type": "string",
+      "format": "email",
       "description": "Contact email address."
     },
     "contactName": {
@@ -91,6 +92,10 @@
     "conversion": {
       "$ref": "#/$defs/varemerkeConversionPrefill",
       "description": "Conversion priority claim."
+    },
+    "submitter": {
+      "$ref": "#/$defs/varemerkeSubmitterPrefill",
+      "description": "Optional submitter (requestor) data. Required for self-identified (email) users since no national register data is available. For person/org users, register data takes precedence."
     }
   },
   "allOf": [
@@ -201,7 +206,7 @@
         },
         "country": {
           "type": "string",
-          "description": "Find list of approved countrycodes using options: countries"
+          "description": "Find list of approved country codes using options: countries"
         }
       },
       "required": ["streetAddress", "postalCode", "city", "country"],
@@ -226,7 +231,7 @@
                 "const": "org"
               },
               "country": {
-                "enum": ["NO", "Norway"]
+                "enum": ["NO"]
               }
             },
             "required": ["role", "country"]
@@ -277,11 +282,12 @@
         },
         "priorityDate": {
           "type": "string",
-          "description": "format: YYYY-MM-DD"
+          "format": "date",
+          "description": "ISO 8601 date (YYYY-MM-DD)."
         },
         "countryCode": {
           "type": "string",
-          "description": "Find list of approved countrycodes using options: priorityCountries"
+          "description": "Find list of approved country codes using options: priorityCountries"
         },
         "allProducts": {
           "type": "boolean",
@@ -310,11 +316,12 @@
         },
         "caseDate": {
           "type": "string",
-          "description": "Recommended format: YYYY-MM-DD"
+          "format": "date",
+          "description": "ISO 8601 date (YYYY-MM-DD)."
         },
         "countryCode": {
           "type": "string",
-          "description": "Find list of approved countrycodes using options: priorityCountries"
+          "description": "Find list of approved country codes using options: priorityCountries"
         },
         "allProducts": {
           "type": "boolean",
@@ -343,17 +350,86 @@
         },
         "internationalDischargeDate": {
           "type": "string",
-          "description": "format: YYYY-MM-DD"
+          "format": "date",
+          "description": "ISO 8601 date (YYYY-MM-DD)."
         },
         "priorityDate": {
           "type": "string",
-          "description": "format: YYYY-MM-DD"
+          "format": "date",
+          "description": "ISO 8601 date (YYYY-MM-DD)."
         }
       },
       "required": [
         "internationalRegistrationNumber",
         "internationalDischargeDate",
         "priorityDate"
+      ],
+      "additionalProperties": false
+    },
+    "varemerkeSubmitterPrefill": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/varemerkeApplicantRole"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "companyNumber": {
+          "type": "string"
+        },
+        "streetAddress": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "Find list of approved country codes using options: countries"
+        },
+        "customerNumber": {
+          "type": "string",
+          "description": "Optional customer number for the submitter."
+        }
+      },
+      "required": ["streetAddress", "postalCode", "city", "country"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "org"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["companyName"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "person"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["firstName", "lastName"]
+          }
+        }
       ],
       "additionalProperties": false
     }

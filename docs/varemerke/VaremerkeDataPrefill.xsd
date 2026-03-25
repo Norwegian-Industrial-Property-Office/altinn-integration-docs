@@ -31,10 +31,15 @@
           <xs:documentation>Specifies whether the submitter acts as the applicant or as an agent.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="contactEmail" type="xs:string">
+      <xs:element name="contactEmail">
         <xs:annotation>
           <xs:documentation>Contact email address.</xs:documentation>
         </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[^@]+@[^@]+\.[^@]+" />
+          </xs:restriction>
+        </xs:simpleType>
       </xs:element>
       <xs:element name="contactName" type="xs:string">
         <xs:annotation>
@@ -150,9 +155,9 @@
   <xs:complexType name="VaremerkePriorityPrefillType">
     <xs:sequence>
       <xs:element name="applicationNumber" type="xs:string"/>
-      <xs:element name="priorityDate" type="xs:string">
+      <xs:element name="priorityDate" type="xs:date">
         <xs:annotation>
-          <xs:documentation>Format: YYYY-MM-DD.</xs:documentation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="countryCode" type="xs:string">
@@ -181,9 +186,9 @@
   <xs:complexType name="VaremerkeEarlierExhibitionPrefillType">
     <xs:sequence>
       <xs:element name="caseName" type="xs:string"/>
-      <xs:element name="caseDate" type="xs:string">
+      <xs:element name="caseDate" type="xs:date">
         <xs:annotation>
-          <xs:documentation>Recommended format: YYYY-MM-DD.</xs:documentation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="countryCode" type="xs:string">
@@ -212,14 +217,14 @@
   <xs:complexType name="VaremerkeConversionPrefillType">
     <xs:sequence>
       <xs:element name="internationalRegistrationNumber" type="xs:string"/>
-      <xs:element name="internationalDischargeDate" type="xs:string">
+      <xs:element name="internationalDischargeDate" type="xs:date">
         <xs:annotation>
-          <xs:documentation>Format: YYYY-MM-DD.</xs:documentation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="priorityDate" type="xs:string">
+      <xs:element name="priorityDate" type="xs:date">
         <xs:annotation>
-          <xs:documentation>Format: YYYY-MM-DD.</xs:documentation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>

@@ -22,12 +22,12 @@ Notes:
 
 Attachments are sent as additional parts in the same `multipart/form-data` request as `varemerkeData-prefill` and `instance`.
 
-In Postman:
+Each attachment part must:
 
-- Set `varemerkeData-prefill` and `instance` to `Text` with `application/json`
-- Set attachment parts to `File`
-- Use the attachment field name as the multipart key
-- Set `Content-Type` to the file's actual MIME type, since the app validates MIME type
+- Use the attachment data type name (from Swagger) as the multipart part name
+- Include a `Content-Type` header matching the file's actual MIME type, since the app validates MIME type
+- Include a `filename` in the `Content-Disposition` header
+- Contain the binary file content as the part body
 
 ## Country Codes
 

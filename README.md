@@ -40,9 +40,11 @@ Each form has a unique prefill data model used when creating instances. The pref
 
 To create an instance with prefill data, use a `multipart/form-data` request. This follows the standard Altinn 3 instantiation pattern (see [Altinn Instances API docs](https://docs.altinn.studio/en/api/apps/instances/#create-instance)).
 
+The `{{app}}Data-prefill` and `instance` parts must have `Content-Type: application/json`. They can be sent either as inline text or as a file
+
 **Template variables used in examples:**
 - `{{basePath}}` - The environment base URL (e.g., `https://pat.apps.tt02.altinn.no`)
-- `{{app}}` - Se table for form names
+- `{{app}}` - See table for form names
 - `{{instanceOwnerPartyId}}` - The party ID from the instance creation response
 - `{{instanceGuid}}` - The instance GUID from the instance creation response
 - `{{altinnToken}}` - Your Altinn Runtime Token (see Authentication section above)
@@ -84,47 +86,34 @@ Content-Type: application/pdf
 **What's standard Altinn:** The multipart structure, the `instance` part with owner information, and the general HTTP pattern are standard Altinn 3 instantiation. You can also provide identity numbers instead of `partyId` (see [Altinn docs](https://docs.altinn.studio/en/api/apps/instances/#create-instance)). For self-identified users without a Norwegian national ID, use `{"instanceOwner":{"username":"user@example.no"}}`
 
 **What's Patentstyret-specific:**
-- The prefill field name (`correspondenceData-prefill`) identifies which form's data model to prefill
+- The prefill field name (`{{app}}Data-prefill`) identifies which form's data model to prefill
 - The prefill JSON structure follows the form's schema (see Available Forms table above)
 - Attachment field names (e.g., `fileAttachment-MainLetter`) correspond to data types defined in each form's application metadata, they are found on the swagger page
+
 
 ## After Instance Creation
 
 Creating an instance initializes the form data with your prefill values. You can then:
 
-1. **Validate** the instance using the [Altinn Validation API](https://docs.altinn.studio/en/api/apps/validation/) to check that all required data is present and valid
+ ### Validate
+ Validate the instance using the [Altinn Validation API](https://docs.altinn.studio/en/api/apps/validation/) to check that all required data is present and valid
 
-2. **Open the form in the browser** to complete and submit it. The user must open the form in a browser to review, complete, and submit it. After a successful instance creation you'll get the instance JSON back. To construct the browser URL, you have two options:
+### Open the form in Browser
 
-   The `id` field in the response contains both values separated by `/`:
-   ```json
-   "id": "{{instanceOwnerPartyId}}/{{instanceGuid}}"
-   ```
-
-   For example, `"id": "501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e"` gives you `instanceOwnerPartyId = 501337` and `instanceGuid = a2298957-7777-4ca3-ae29-7b6d4fb1a07e`.
-
-   **Option A: Construct the URL from the `id` field**
-
-   ```
-   {{basePath}}/pat/{{app}}/#/instance/{{id}}
-   ```
-
-   For example: `https://pat.apps.tt02.altinn.no/pat/varemerke/#/instance/501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e`
-
-   **Option B: Use the `selfLinks.apps` URL from the response**
+Open the form in the browser to complete and submit it. The user must open the form in a browser to review, complete, and submit it. After a successful instance creation you'll get the instance JSON back.\n
+   **Use the `selfLinks.apps` URL from the response**
 
    In the instance JSON response, find the `selfLinks.apps` value:
    ```
    "selfLinks": {
-       "apps": "https://pat.apps.tt02.altinn.no/pat/varemerke/instances/501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e"
+       "apps": "{{basePath}}/pat/{{app}}/instances/{{instanceOwnerPartyId}}/{{instanceGuid}}"
    }
    ```
 
    Replace `instances` with `#/instance` to get the browser URL:
    ```
-   https://pat.apps.tt02.altinn.no/pat/varemerke/#/instance/501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e
+   {{basePath}}/pat/{{app}}/#/instance/{{instanceOwnerPartyId}}/{{instanceGuid}}
    ```
-
 
 
 ## Further Reading
