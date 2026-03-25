@@ -32,7 +32,9 @@ Each form has a unique prefill data model used when creating instances. The pref
 | Correspondence        | `correspondence`  | [TT02](https://pat.apps.tt02.altinn.no/pat/correspondence/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/correspondence/swagger/index.html)                         | `correspondenceData-prefill` | [JSON](docs/correspondence/CorrespondenceDataPrefill.schema.json) ([XSD](docs/correspondence/CorrespondenceDataPrefill.xsd)) | [Docs](docs/correspondence/)  |
 | Patent                | `patent`          | [TT02](https://pat.apps.tt02.altinn.no/pat/patent/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/patent/swagger/index.html)                                       | `patentData-prefill`         | Coming soon                                                                                                                  | [Docs](docs/patent/)          |
 | Design                | `design`          | [TT02](https://pat.apps.tt02.altinn.no/pat/design/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/design/swagger/index.html)                                       | `designData-prefill`         | Coming soon                                                                                                                  | [Docs](docs/design/)          |
-| Trademark             | `varemerke`       | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)                                 | `varemerkeData-prefill`      | [JSON](docs/varemerke/VaremerkeDataPrefill.schema.json) ([XSD](docs/varemerke/VaremerkeDataPrefill.xsd))                   | [Docs](docs/varemerke/)       |
+| Trademark             | `varemerke`       | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)                                 | `varemerkeData-prefill`      | [JSON](docs/varemerke/VaremerkeDataPrefill.schema.json) ([XSD](docs/varemerke/VaremerkeDataPrefill.xsd))                   | [Docs](docs/varemerke/README.md)       |
+
+> **Note:** Where both JSON Schema and XSD are provided, the **JSON Schema is the authoritative source**. The XSD is provided for documentation and XML-oriented tooling but does not express all conditional validation rules (e.g., role-dependent required fields). Always validate against the JSON Schema.
 
 ## Creating Instances with Prefill Data
 
@@ -40,7 +42,7 @@ To create an instance with prefill data, use a `multipart/form-data` request. Th
 
 **Template variables used in examples:**
 - `{{basePath}}` - The environment base URL (e.g., `https://pat.apps.tt02.altinn.no`)
-- `{{app}}` - The form name: `correspondence`, `patent`, `design`, or `varemerke`
+- `{{app}}` - Se table for form names
 - `{{instanceOwnerPartyId}}` - The party ID from the instance creation response
 - `{{instanceGuid}}` - The instance GUID from the instance creation response
 - `{{altinnToken}}` - Your Altinn Runtime Token (see Authentication section above)
@@ -79,12 +81,12 @@ Content-Type: application/pdf
 --boundary--
 ```
 
-**What's standard Altinn:** The multipart structure, the `instance` part with owner information, and the general HTTP pattern are standard Altinn 3 instantiation. You can also provide identity numbers instead of `partyId` (see [Altinn docs](https://docs.altinn.studio/en/api/apps/instances/#create-instance)).
+**What's standard Altinn:** The multipart structure, the `instance` part with owner information, and the general HTTP pattern are standard Altinn 3 instantiation. You can also provide identity numbers instead of `partyId` (see [Altinn docs](https://docs.altinn.studio/en/api/apps/instances/#create-instance)). For self-identified users without a Norwegian national ID, use `{"instanceOwner":{"username":"user@example.no"}}`
 
 **What's Patentstyret-specific:**
 - The prefill field name (`correspondenceData-prefill`) identifies which form's data model to prefill
 - The prefill JSON structure follows the form's schema (see Available Forms table above)
-- Attachment field names (e.g., `fileAttachment-MainLetter`) correspond to data types defined in each form's application metadata
+- Attachment field names (e.g., `fileAttachment-MainLetter`) correspond to data types defined in each form's application metadata, they are found on the swagger page
 
 ## After Instance Creation
 
@@ -92,7 +94,38 @@ Creating an instance initializes the form data with your prefill values. You can
 
 1. **Validate** the instance using the [Altinn Validation API](https://docs.altinn.studio/en/api/apps/validation/) to check that all required data is present and valid
 
-Completing the form submission (advancing through the process to final submission) must be done through the Altinn user interface or is handled by the form's built-in process logic.
+2. **Open the form in the browser** to complete and submit it. The user must open the form in a browser to review, complete, and submit it. After a successful instance creation you'll get the instance JSON back. To construct the browser URL, you have two options:
+
+   The `id` field in the response contains both values separated by `/`:
+   ```json
+   "id": "{{instanceOwnerPartyId}}/{{instanceGuid}}"
+   ```
+
+   For example, `"id": "501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e"` gives you `instanceOwnerPartyId = 501337` and `instanceGuid = a2298957-7777-4ca3-ae29-7b6d4fb1a07e`.
+
+   **Option A: Construct the URL from the `id` field**
+
+   ```
+   {{basePath}}/pat/{{app}}/#/instance/{{id}}
+   ```
+
+   For example: `https://pat.apps.tt02.altinn.no/pat/varemerke/#/instance/501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e`
+
+   **Option B: Use the `selfLinks.apps` URL from the response**
+
+   In the instance JSON response, find the `selfLinks.apps` value:
+   ```
+   "selfLinks": {
+       "apps": "https://pat.apps.tt02.altinn.no/pat/varemerke/instances/501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e"
+   }
+   ```
+
+   Replace `instances` with `#/instance` to get the browser URL:
+   ```
+   https://pat.apps.tt02.altinn.no/pat/varemerke/#/instance/501337/a2298957-7777-4ca3-ae29-7b6d4fb1a07e
+   ```
+
+
 
 ## Further Reading
 
@@ -101,7 +134,7 @@ Completing the form submission (advancing through the process to final submissio
 
 ## Getting Started with Postman
 
-An sample Postman collection is available to demonstrate a typical flow using the Correspondence schema. This collection serves as a reference and includes pre-configured requests for:
+A sample Postman collection is available to demonstrate a typical flow using the Correspondence schema. This collection serves as a reference and includes pre-configured requests for:
 
 - Authentication (ID-porten and Maskinporten token exchange)
 - Creating instances with prefill data
