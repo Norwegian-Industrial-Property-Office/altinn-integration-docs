@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:patentstyret:varemerke:prefill"
+           xmlns:tns="urn:patentstyret:varemerke:prefill"
+           elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      XSD representation of the varemerke multipart prefill JSON schema.
+      The app still expects the multipart part varemerkeData-prefill as application/json during instantiation.
+      This schema exists for XML-oriented tooling and documentation.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="varemerkeData-prefill" type="tns:VaremerkeDataPrefillType"/>
+
+  <xs:complexType name="VaremerkeDataPrefillType">
+    <xs:sequence>
+      <xs:element name="category" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Trademark category.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trademarkType" type="tns:VaremerkeTrademarkType">
+        <xs:annotation>
+          <xs:documentation>Trademark type. Use one of the supported external trademark type values.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="agentOrApplicant" type="tns:VaremerkeAgentOrApplicant">
+        <xs:annotation>
+          <xs:documentation>Specifies whether the submitter acts as the applicant or as an agent.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactEmail">
+        <xs:annotation>
+          <xs:documentation>Contact email address.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[^@]+@[^@]+\.[^@]+" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="contactName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Contact person name.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactReference" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Customer reference for the submission.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactPhoneNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Contact phone number.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="agentCustomerNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional customer number for the submitting agent. Do not supply this when agentOrApplicant is applicant.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="paymentMethod" type="tns:VaremerkePaymentMethod">
+        <xs:annotation>
+          <xs:documentation>Preferred payment method.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trademarkText" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Trademark text.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trademarkDetails" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Additional trademark details.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="applicants" type="tns:ApplicantsType">
+        <xs:annotation>
+          <xs:documentation>Applicants included in the prefill payload.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="goodsAndServices" type="tns:GoodsAndServicesType">
+        <xs:annotation>
+          <xs:documentation>Goods and services included in the prefill payload.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="priorityType" type="tns:VaremerkePriorityType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Selects which priority claim type is included in the payload. When supplied, use the matching branch: priorities for earlierApplication, earlierExhibition for earlierExhibition, and conversion for conversion.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="priorities" type="tns:PrioritiesType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Earlier application priority claims.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="earlierExhibition" type="tns:VaremerkeEarlierExhibitionPrefillType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Earlier exhibition priority claim.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="conversion" type="tns:VaremerkeConversionPrefillType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Conversion priority claim.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ApplicantsType">
+    <xs:sequence>
+      <xs:element name="applicant" type="tns:VaremerkeApplicantPrefillType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VaremerkeApplicantPrefillType">
+    <xs:sequence>
+      <xs:element name="role" type="tns:VaremerkeApplicantRole" minOccurs="0"/>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="streetAddress" type="xs:string"/>
+      <xs:element name="postalCode" type="xs:string"/>
+      <xs:element name="city" type="xs:string"/>
+      <xs:element name="country" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Find approved country codes using options: countries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GoodsAndServicesType">
+    <xs:sequence>
+      <xs:element name="item" type="tns:VaremerkeGoodsAndServicesPrefillType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VaremerkeGoodsAndServicesPrefillType">
+    <xs:sequence>
+      <xs:element name="classNumber" type="tns:NiceClassNumberType"/>
+      <xs:element name="text" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PrioritiesType">
+    <xs:sequence>
+      <xs:element name="priority" type="tns:VaremerkePriorityPrefillType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VaremerkePriorityPrefillType">
+    <xs:sequence>
+      <xs:element name="applicationNumber" type="xs:string"/>
+      <xs:element name="priorityDate" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="countryCode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Find approved country codes using options: priorityCountries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="allProducts" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>When false, classNumbers and products are expected by the JSON schema contract.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classNumbers" type="tns:NiceClassNumbersType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Class numbers must also exist in goodsAndServices.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="products" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Required when allProducts is false.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VaremerkeEarlierExhibitionPrefillType">
+    <xs:sequence>
+      <xs:element name="caseName" type="xs:string"/>
+      <xs:element name="caseDate" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="countryCode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Find approved country codes using options: priorityCountries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="allProducts" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>When false, classNumbers and products are expected by the JSON schema contract.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classNumbers" type="tns:NiceClassNumbersType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Class numbers must also exist in goodsAndServices.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="products" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Required when allProducts is false.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VaremerkeConversionPrefillType">
+    <xs:sequence>
+      <xs:element name="internationalRegistrationNumber" type="xs:string"/>
+      <xs:element name="internationalDischargeDate" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="priorityDate" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>ISO 8601 date (YYYY-MM-DD).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NiceClassNumbersType">
+    <xs:sequence>
+      <xs:element name="classNumber" type="tns:NiceClassNumberType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="VaremerkePriorityType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="earlierApplication"/>
+      <xs:enumeration value="earlierExhibition"/>
+      <xs:enumeration value="conversion"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VaremerkeAgentOrApplicant">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="applicant"/>
+      <xs:enumeration value="agent"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VaremerkePaymentMethod">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="masterCard"/>
+      <xs:enumeration value="visa"/>
+      <xs:enumeration value="invoice"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VaremerkeTrademarkType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="word"/>
+      <xs:enumeration value="figurative"/>
+      <xs:enumeration value="combined"/>
+      <xs:enumeration value="threeDimensional"/>
+      <xs:enumeration value="hologram"/>
+      <xs:enumeration value="sound"/>
+      <xs:enumeration value="pattern"/>
+      <xs:enumeration value="position"/>
+      <xs:enumeration value="multimedia"/>
+      <xs:enumeration value="color"/>
+      <xs:enumeration value="moving"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VaremerkeApplicantRole">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="person"/>
+      <xs:enumeration value="org"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NiceClassRangeType">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="45"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NiceUndefinedClassType">
+    <xs:restriction base="xs:integer">
+      <xs:enumeration value="99"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NiceClassNumberType">
+    <xs:union memberTypes="tns:NiceClassRangeType tns:NiceUndefinedClassType"/>
+  </xs:simpleType>
+
+</xs:schema>
