@@ -1,0 +1,358 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://patentstyret.no/schemas/PatentDataPrefill.schema.json",
+  "title": "PatentDataPrefill",
+  "description": "JSON Schema for the Patent Data Prefill API. This schema defines the data structure for pre-filling patent application forms via the Altinn 3 API.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contactEmail"
+  ],
+  "properties": {
+    "contactEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Required contact email address for the patent application"
+    },
+    "contactName": {
+      "type": "string",
+      "description": "Name of the contact person"
+    },
+    "contactReference": {
+      "type": "string",
+      "description": "Reference identifier for the contact"
+    },
+    "contactPhoneNumber": {
+      "type": "string",
+      "description": "Phone number of the contact person"
+    },
+    "inquiryMessage": {
+      "type": "string",
+      "description": "Optional message or inquiry related to the application"
+    },
+    "inventionTitle": {
+      "type": "string",
+      "description": "Title of the invention. Required when pctApplicationNumber is provided."
+    },
+    "numberOfClaims": {
+      "type": "integer",
+      "description": "Number of claims in the patent application",
+      "minimum": 0
+    },
+    "acceleratedApplication": {
+      "type": "boolean",
+      "description": "Whether this is an accelerated application"
+    },
+    "requestedCaseManagementLanguage": {
+      "type": "string",
+      "description": "Preferred language for case management",
+      "enum": [
+        "no",
+        "en"
+      ]
+    },
+    "manYears": {
+      "type": "boolean",
+      "description": "Indicator for man-years calculation"
+    },
+    "pctApplicationNumber": {
+      "type": "string",
+      "description": "PCT (Patent Cooperation Treaty) application number. When provided, pctApplicationDate and inventionTitle are required."
+    },
+    "pctApplicationDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the PCT application (ISO 8601 format: YYYY-MM-DD). Required when pctApplicationNumber is provided."
+    },
+    "dividedOrDivisional": {
+      "type": "string",
+      "description": "Application type indicator. When set, divApplicationNumber and divApplicationDate are required.",
+      "enum": [
+        "divided",
+        "divisional"
+      ]
+    },
+    "divApplicationNumber": {
+      "type": "string",
+      "description": "Divisional application number. Required when dividedOrDivisional is set."
+    },
+    "divApplicationDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the divisional application (ISO 8601 format: YYYY-MM-DD). Required when dividedOrDivisional is set."
+    },
+    "fusNumber": {
+      "type": "string",
+      "description": "FUS (Felles Utsendelses System) number"
+    },
+    "earlierApplications": {
+      "type": "array",
+      "description": "List of earlier applications claiming priority",
+      "items": {
+        "$ref": "#/definitions/PrefillEarlierApplication"
+      }
+    },
+    "agentOrApplicant": {
+      "type": "string",
+      "description": "Indicator whether the submitter is an agent or applicant. When 'agent' or 'fullmektig', agentCustomerNumber is required.",
+      "enum": [
+        "agent",
+        "applicant",
+        "fullmektig"
+      ]
+    },
+    "agentCustomerNumber": {
+      "type": "string",
+      "description": "Customer number for the agent. Required when agentOrApplicant is 'agent' or 'fullmektig'."
+    },
+    "reasonApplicantNotSameAsInventor": {
+      "type": "string",
+      "description": "Reason why applicant is not the same as inventor.",
+      "enum": [
+        "dealWithinventor",
+        "employeesInventionsAct",
+        "assignmentFromInventor",
+        "other"
+      ]
+    },
+    "reasonApplicantNotSameAsInventorOtherExplanation": {
+      "type": "string",
+      "description": "Free-text explanation required when reasonApplicantNotSameAsInventor is 'other'."
+    },
+    "applicantsAndInventors": {
+      "type": "array",
+      "description": "List of applicants and inventors associated with the patent",
+      "items": {
+        "$ref": "#/definitions/PrefillApplicantOrInventor"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "pctApplicationNumber": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "pctApplicationNumber"
+        ]
+      },
+      "then": {
+        "required": [
+          "pctApplicationDate",
+          "inventionTitle"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pctApplicationDate": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "pctApplicationDate"
+        ]
+      },
+      "then": {
+        "required": [
+          "pctApplicationNumber"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "dividedOrDivisional": {
+            "enum": [
+              "divided",
+              "divisional"
+            ]
+          }
+        },
+        "required": [
+          "dividedOrDivisional"
+        ]
+      },
+      "then": {
+        "required": [
+          "divApplicationNumber",
+          "divApplicationDate"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "agentOrApplicant": {
+            "enum": [
+              "agent",
+              "fullmektig"
+            ]
+          }
+        },
+        "required": [
+          "agentOrApplicant"
+        ]
+      },
+      "then": {
+        "required": [
+          "agentCustomerNumber"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "reasonApplicantNotSameAsInventor": {
+            "const": "other"
+          }
+        },
+        "required": [
+          "reasonApplicantNotSameAsInventor"
+        ]
+      },
+      "then": {
+        "required": [
+          "reasonApplicantNotSameAsInventorOtherExplanation"
+        ]
+      }
+    }
+  ],
+  "definitions": {
+    "PrefillEarlierApplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Represents an earlier application for priority claims",
+      "required": [
+        "priorityDate",
+        "country",
+        "caseId"
+      ],
+      "properties": {
+        "priorityDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Priority date of the earlier application (ISO 8601 format: YYYY-MM-DD)"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code of the earlier application (ISO 3166-1 alpha-2 or alpha-3)"
+        },
+        "caseId": {
+          "type": "string",
+          "description": "Case identifier for the earlier application"
+        }
+      }
+    },
+    "PrefillApplicantOrInventor": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Represents an applicant or inventor in the patent application",
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "Role of the person/organization",
+          "enum": [
+            "applicant",
+            "inventor"
+          ]
+        },
+        "personOrOrganization": {
+          "type": "string",
+          "description": "Type indicator: 'person' requires firstName and lastName; 'organization' requires companyName",
+          "enum": [
+            "person",
+            "organization"
+          ]
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name. Required when personOrOrganization is 'person'."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name. Required when personOrOrganization is 'person'."
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name. Required when personOrOrganization is 'organization'."
+        },
+        "companyNumber": {
+          "type": "string",
+          "description": "Company registration number (when personOrOrganization is 'organization')"
+        },
+        "streetAddress": {
+          "type": "string",
+          "description": "Street address"
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal/ZIP code"
+        },
+        "city": {
+          "type": "string",
+          "description": "City name"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code (ISO 3166-1 alpha-2 or alpha-3)"
+        },
+        "isNorwegianPerson": {
+          "type": "boolean",
+          "description": "Indicator if the person is Norwegian (when personOrOrganization is 'person')"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth (YYYY-MM-DD). Required when isNorwegianPerson is true."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "personOrOrganization": {
+                "const": "person"
+              }
+            },
+            "required": [
+              "personOrOrganization"
+            ]
+          },
+          "then": {
+            "required": [
+              "firstName",
+              "lastName",
+              "country"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "personOrOrganization": {
+                "const": "organization"
+              }
+            },
+            "required": [
+              "personOrOrganization"
+            ]
+          },
+          "then": {
+            "required": [
+              "companyName",
+              "companyNumber",
+              "country"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
