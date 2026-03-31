@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="urn:patentstyret:patent:prefill"
+    targetNamespace="urn:patentstyret:patent:prefill"
+    elementFormDefault="qualified">
+
+    <xs:annotation>
+        <xs:documentation>
+            XML Schema for the Patent Data Prefill API.
+            This schema defines the data structure for pre-filling patent application forms via the Altinn 3 API.
+            Runtime ingestion contract: JSON only (application/json).
+            This XSD is retained for documentation and legacy reference, not as an accepted runtime prefill content type.
+            Namespace: urn:patentstyret:patent:prefill
+        </xs:documentation>
+    </xs:annotation>
+
+    <!-- ==================== Simple Types (Enums) ==================== -->
+
+    <xs:simpleType name="DividedOrDivisionalType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="divided"/>
+            <xs:enumeration value="divisional"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="CaseManagementLanguageType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="no"/>
+            <xs:enumeration value="en"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AgentOrApplicantType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="agent"/>
+            <xs:enumeration value="applicant"/>
+            <xs:enumeration value="fullmektig"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ReasonApplicantNotSameAsInventorType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="dealWithinventor"/>
+            <xs:enumeration value="employeesInventionsAct"/>
+            <xs:enumeration value="assignmentFromInventor"/>
+            <xs:enumeration value="other"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RoleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="applicant"/>
+            <xs:enumeration value="inventor"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PersonOrOrganizationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="person"/>
+            <xs:enumeration value="organization"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- ==================== Root Element ==================== -->
+
+    <xs:element name="patentData-prefill" type="tns:PatentDataPrefill"/>
+
+    <!-- ==================== Main Type ==================== -->
+
+    <xs:complexType name="PatentDataPrefill">
+        <xs:annotation>
+            <xs:documentation>Root type for patent prefill data</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="contactEmail" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Required contact email address for the patent application</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="contactName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Name of the contact person</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="contactReference" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Reference identifier for the contact</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="contactPhoneNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Phone number of the contact person</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="inquiryMessage" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Optional message or inquiry related to the application</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="inventionTitle" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Title of the invention. Required when pctApplicationNumber is provided.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="numberOfClaims" type="xs:int" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Number of claims in the patent application</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="acceleratedApplication" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Whether this is an accelerated application</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="requestedCaseManagementLanguage" type="tns:CaseManagementLanguageType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Preferred language for case management: 'no' for Norwegian, 'en' for English</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="manYears" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Indicator for man-years calculation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="pctApplicationNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>PCT application number. When provided, pctApplicationDate and inventionTitle are required.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="pctApplicationDate" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Date of the PCT application (ISO 8601 format: YYYY-MM-DD). Required when pctApplicationNumber is provided.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="dividedOrDivisional" type="tns:DividedOrDivisionalType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Indicator for divided or divisional application type. When provided, divApplicationNumber and divApplicationDate are required.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="divApplicationNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Divisional application number. Required when dividedOrDivisional is provided.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="divApplicationDate" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Date of the divisional application (ISO 8601 format: YYYY-MM-DD). Required when dividedOrDivisional is provided.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fusNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>FUS (Felles Utsendelses System) number</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="earlierApplications" type="tns:EarlierApplicationsList" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>List of earlier applications claiming priority</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="agentOrApplicant" type="tns:AgentOrApplicantType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Indicator whether the submitter is an agent or applicant. When 'agent' or 'fullmektig', agentCustomerNumber is required.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="agentCustomerNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Customer number for the agent. Required when agentOrApplicant is 'agent' or 'fullmektig'.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reasonApplicantNotSameAsInventor" type="tns:ReasonApplicantNotSameAsInventorType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Reason why applicant is not the same as inventor.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reasonApplicantNotSameAsInventorOtherExplanation" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Free-text explanation required when reasonApplicantNotSameAsInventor is 'other'.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="applicantsAndInventors" type="tns:ApplicantsAndInventorsList" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>List of applicants and inventors associated with the patent</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ==================== Earlier Applications List ==================== -->
+
+    <xs:complexType name="EarlierApplicationsList">
+        <xs:sequence>
+            <xs:element name="PrefillEarlierApplication" type="tns:PrefillEarlierApplication" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ==================== Earlier Application Type ==================== -->
+
+    <xs:complexType name="PrefillEarlierApplication">
+        <xs:annotation>
+            <xs:documentation>Represents an earlier application for priority claims</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="priorityDate" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Priority date of the earlier application (ISO 8601 format: YYYY-MM-DD)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="country" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Country code of the earlier application (ISO 3166-1 alpha-2 or alpha-3)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="caseId" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Case identifier for the earlier application</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ==================== Applicants and Inventors List ==================== -->
+
+    <xs:complexType name="ApplicantsAndInventorsList">
+        <xs:sequence>
+            <xs:element name="PrefillApplicantOrInventor" type="tns:PrefillApplicantOrInventor" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ==================== Applicant or Inventor Type ==================== -->
+
+    <xs:complexType name="PrefillApplicantOrInventor">
+        <xs:annotation>
+            <xs:documentation>Represents an applicant or inventor in the patent application</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="role" type="tns:RoleType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Role of the person/organization: 'applicant' or 'inventor'</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="personOrOrganization" type="tns:PersonOrOrganizationType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Type indicator: 'person' for individual (requires firstName and lastName), 'organization' for company/entity (requires companyName)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="firstName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>First name. Required when personOrOrganization is 'person'.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="lastName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Last name. Required when personOrOrganization is 'person'.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="companyName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Company name. Required when personOrOrganization is 'organization'.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="companyNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Company registration number (when personOrOrganization is 'organization')</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="streetAddress" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Street address</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="postalCode" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Postal/ZIP code</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="city" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>City name</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Country code (ISO 3166-1 alpha-2 or alpha-3)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="isNorwegianPerson" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Indicator if the person is Norwegian (when personOrOrganization is 'person')</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="dateOfBirth" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Date of birth (ISO 8601 format: YYYY-MM-DD). Required when isNorwegianPerson is true.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

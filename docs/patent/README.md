@@ -6,4 +6,10 @@ When creating an instance via multipart/form-data, use the field name: **`patent
 
 ## Prefill Schema
 
-Prefill schema documentation is in progress.
+- [PatentDataPrefill.schema.json](./PatentDataPrefill.schema.json) — JSON Schema
+- [PatentDataPrefill.xsd](./PatentDataPrefill.xsd) — XSD Schema
+
+## Attachments
+
+Attachments are included as additional parts in the multipart/form-data request. 
+The part name must match a data type defined in the form's application metadata (e.g., `fileAttachment-descriptionFiles`).
