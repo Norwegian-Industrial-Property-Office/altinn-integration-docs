@@ -121,6 +121,10 @@
       "items": {
         "$ref": "#/definitions/PrefillApplicantOrInventor"
       }
+    },
+    "submitter": {
+      "$ref": "#/definitions/PrefillSubmitter",
+      "description": "Submitter identity for self-identified users (userType=user). Optional in schema but required at runtime when userType is 'user'. Must have firstName+lastName or companyName, plus address fields."
     }
   },
   "allOf": [
@@ -185,11 +189,11 @@
     {
       "if": {
         "properties": {
-          "agentOrApplicant": {
-            "enum": [
-              "agent"
-            ]
-          }
+            "agentOrApplicant": {
+              "enum": [
+                "agent"
+              ]
+            }
         },
         "required": [
           "agentOrApplicant"
@@ -361,6 +365,42 @@
           }
         }
       ]
+    },
+    "PrefillSubmitter": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Submitter identity for self-identified users. Maps to Patent.Requestor when userType is 'user'. Must have firstName+lastName (person) or companyName (org), plus address fields.",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "First name. Required for person submitters."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name. Required for person submitters."
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name. Optional — for organization submitters."
+        },
+        "streetAddress": {
+          "type": "string",
+          "description": "Street address"
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal/ZIP code"
+        },
+        "city": {
+          "type": "string",
+          "description": "City name"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code (ISO 3166-1 alpha-2 or alpha-3)"
+        }
+      }
     }
   }
 }
+

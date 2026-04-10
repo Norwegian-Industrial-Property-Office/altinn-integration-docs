@@ -183,6 +183,11 @@
                     <xs:documentation>List of applicants and inventors associated with the patent</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="submitter" type="tns:PrefillSubmitter" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Submitter identity for self-identified users (userType=user). Optional in schema but required at runtime when userType is 'user'. Must have firstName+lastName or companyName, plus address fields.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -286,4 +291,51 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
+
+    <!-- ==================== Submitter Type ==================== -->
+
+    <xs:complexType name="PrefillSubmitter">
+        <xs:annotation>
+            <xs:documentation>Submitter identity for self-identified users. Maps to Patent.Requestor when userType is 'user'. Must have firstName+lastName (person) or companyName (org), plus address fields.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="firstName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>First name. Required for person submitters.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="lastName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Last name. Required for person submitters.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="companyName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Company name. Optional — for organization submitters.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="streetAddress" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Street address</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="postalCode" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Postal/ZIP code</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="city" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>City name</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Country code (ISO 3166-1 alpha-2 or alpha-3)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
 </xs:schema>
+
