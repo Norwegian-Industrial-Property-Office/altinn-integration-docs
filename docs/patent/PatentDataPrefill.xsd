@@ -75,7 +75,7 @@
         <xs:sequence>
             <xs:element name="contactEmail" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Contact email address used for application-related communication. In this static schema it is optional and primarily used for documentation/autocomplete, but it may be required conditionally at runtime for self-identified users.</xs:documentation>
+                    <xs:documentation>Contact email address. Required when userType is 'user'.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="contactName" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -103,10 +103,15 @@
                     <xs:documentation>Title of the invention. Required when pctApplicationNumber is provided.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="numberOfClaims" type="xs:int" minOccurs="0" maxOccurs="1">
+            <xs:element name="numberOfClaims" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>Number of claims in the patent application</xs:documentation>
                 </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:int">
+                        <xs:minInclusive value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
             </xs:element>
             <xs:element name="acceleratedApplication" type="xs:boolean" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
@@ -185,7 +190,7 @@
             </xs:element>
             <xs:element name="submitter" type="tns:PrefillSubmitter" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Submitter identity for self-identified users (userType=user). Optional in schema but required at runtime when userType is 'user'. Must have firstName+lastName or companyName, plus address fields.</xs:documentation>
+                    <xs:documentation>Submitter identity. Required when userType is 'user'. Must include firstName+lastName or companyName, plus address fields.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -296,7 +301,7 @@
 
     <xs:complexType name="PrefillSubmitter">
         <xs:annotation>
-            <xs:documentation>Submitter identity for self-identified users. Maps to Patent.Requestor when userType is 'user'. Must have firstName+lastName (person) or companyName (org), plus address fields.</xs:documentation>
+            <xs:documentation>Submitter identity. Required when userType is 'user'. Must include firstName+lastName (person) or companyName (organization), plus address fields.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="firstName" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -338,4 +343,3 @@
     </xs:complexType>
 
 </xs:schema>
-
