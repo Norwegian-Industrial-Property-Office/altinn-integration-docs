@@ -35,7 +35,6 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="agent"/>
             <xs:enumeration value="applicant"/>
-            <xs:enumeration value="fullmektig"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -52,13 +51,14 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="applicant"/>
             <xs:enumeration value="inventor"/>
+            <xs:enumeration value="both"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="PersonOrOrganizationType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="person"/>
-            <xs:enumeration value="organization"/>
+            <xs:enumeration value="org"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -73,9 +73,9 @@
             <xs:documentation>Root type for patent prefill data</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="contactEmail" type="xs:string" minOccurs="1" maxOccurs="1">
+            <xs:element name="contactEmail" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Required contact email address for the patent application</xs:documentation>
+                    <xs:documentation>Contact email address used for application-related communication. In this static schema it is optional and primarily used for documentation/autocomplete, but it may be required conditionally at runtime for self-identified users.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="contactName" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -118,9 +118,9 @@
                     <xs:documentation>Preferred language for case management: 'no' for Norwegian, 'en' for English</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="manYears" type="xs:boolean" minOccurs="0" maxOccurs="1">
+            <xs:element name="applicantPerformsMoreThan20ManYears" type="xs:boolean" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Indicator for man-years calculation</xs:documentation>
+                    <xs:documentation>Whether the applicant performs more than 20 man-years</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="pctApplicationNumber" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -160,12 +160,12 @@
             </xs:element>
             <xs:element name="agentOrApplicant" type="tns:AgentOrApplicantType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Indicator whether the submitter is an agent or applicant. When 'agent' or 'fullmektig', agentCustomerNumber is required.</xs:documentation>
+                    <xs:documentation>Indicator whether the submitter is an agent or applicant. When 'agent', agentCustomerNumber is required.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="agentCustomerNumber" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Customer number for the agent. Required when agentOrApplicant is 'agent' or 'fullmektig'.</xs:documentation>
+                    <xs:documentation>Customer number for the agent. Required when agentOrApplicant is 'agent'.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="reasonApplicantNotSameAsInventor" type="tns:ReasonApplicantNotSameAsInventorType" minOccurs="0" maxOccurs="1">
@@ -236,12 +236,12 @@
         <xs:sequence>
             <xs:element name="role" type="tns:RoleType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Role of the person/organization: 'applicant' or 'inventor'</xs:documentation>
+                    <xs:documentation>Role of the person/organization: 'applicant', 'inventor' or 'both'</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="personOrOrganization" type="tns:PersonOrOrganizationType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Type indicator: 'person' for individual (requires firstName and lastName), 'organization' for company/entity (requires companyName)</xs:documentation>
+                    <xs:documentation>Type indicator: 'person' for individual (requires firstName and lastName), 'org' for company/entity (requires companyName)</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="firstName" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -256,12 +256,7 @@
             </xs:element>
             <xs:element name="companyName" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Company name. Required when personOrOrganization is 'organization'.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="companyNumber" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>Company registration number (when personOrOrganization is 'organization')</xs:documentation>
+                    <xs:documentation>Company name. Required when personOrOrganization is 'org'.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="streetAddress" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -289,12 +284,6 @@
                     <xs:documentation>Indicator if the person is Norwegian (when personOrOrganization is 'person')</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="dateOfBirth" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>Date of birth (ISO 8601 format: YYYY-MM-DD). Required when isNorwegianPerson is true.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
         </xs:sequence>
     </xs:complexType>
-
 </xs:schema>

@@ -5,14 +5,11 @@
   "description": "JSON Schema for the Patent Data Prefill API. This schema defines the data structure for pre-filling patent application forms via the Altinn 3 API.",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "contactEmail"
-  ],
   "properties": {
     "contactEmail": {
       "type": "string",
       "format": "email",
-      "description": "Required contact email address for the patent application"
+      "description": "Contact email address used for application-related communication. In this static schema it is optional and primarily used for documentation/autocomplete, but it may be required conditionally at runtime for self-identified users."
     },
     "contactName": {
       "type": "string",
@@ -51,9 +48,9 @@
         "en"
       ]
     },
-    "manYears": {
+    "applicantPerformsMoreThan20ManYears": {
       "type": "boolean",
-      "description": "Indicator for man-years calculation"
+      "description": "Whether the applicant performs more than 20 man-years"
     },
     "pctApplicationNumber": {
       "type": "string",
@@ -94,16 +91,15 @@
     },
     "agentOrApplicant": {
       "type": "string",
-      "description": "Indicator whether the submitter is an agent or applicant. When 'agent' or 'fullmektig', agentCustomerNumber is required.",
+      "description": "Indicator whether the submitter is an agent or applicant. When 'agent', agentCustomerNumber is required.",
       "enum": [
         "agent",
-        "applicant",
-        "fullmektig"
+        "applicant"
       ]
     },
     "agentCustomerNumber": {
       "type": "string",
-      "description": "Customer number for the agent. Required when agentOrApplicant is 'agent' or 'fullmektig'."
+      "description": "Customer number for the agent. Required when agentOrApplicant is 'agent'."
     },
     "reasonApplicantNotSameAsInventor": {
       "type": "string",
@@ -191,8 +187,7 @@
         "properties": {
           "agentOrApplicant": {
             "enum": [
-              "agent",
-              "fullmektig"
+              "agent"
             ]
           }
         },
@@ -260,15 +255,16 @@
           "description": "Role of the person/organization",
           "enum": [
             "applicant",
-            "inventor"
+            "inventor",
+            "both"
           ]
         },
         "personOrOrganization": {
           "type": "string",
-          "description": "Type indicator: 'person' requires firstName and lastName; 'organization' requires companyName",
+          "description": "Type indicator: 'person' requires firstName and lastName; 'org' requires companyName",
           "enum": [
             "person",
-            "organization"
+            "org"
           ]
         },
         "firstName": {
@@ -281,11 +277,7 @@
         },
         "companyName": {
           "type": "string",
-          "description": "Company name. Required when personOrOrganization is 'organization'."
-        },
-        "companyNumber": {
-          "type": "string",
-          "description": "Company registration number (when personOrOrganization is 'organization')"
+          "description": "Company name. Required when personOrOrganization is 'org'."
         },
         "streetAddress": {
           "type": "string",
@@ -306,11 +298,6 @@
         "isNorwegianPerson": {
           "type": "boolean",
           "description": "Indicator if the person is Norwegian (when personOrOrganization is 'person')"
-        },
-        "dateOfBirth": {
-          "type": "string",
-          "format": "date",
-          "description": "Date of birth (YYYY-MM-DD). Required when isNorwegianPerson is true."
         }
       },
       "allOf": [
@@ -337,7 +324,7 @@
           "if": {
             "properties": {
               "personOrOrganization": {
-                "const": "organization"
+                "const": "org"
               }
             },
             "required": [
@@ -347,8 +334,29 @@
           "then": {
             "required": [
               "companyName",
-              "companyNumber",
               "country"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "inventor"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "then": {
+            "properties": {
+              "personOrOrganization": {
+                "const": "person"
+              }
+            },
+            "required": [
+              "personOrOrganization"
             ]
           }
         }
