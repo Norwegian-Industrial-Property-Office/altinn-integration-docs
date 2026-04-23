@@ -2,26 +2,22 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://patentstyret.no/schemas/PatentDataPrefill.schema.json",
   "title": "PatentDataPrefill",
-  "description": "JSON Schema for the Patent Data Prefill API. This schema defines the data structure for pre-filling patent application forms via the Altinn 3 API.",
+  "description": "Schema for prefilling patent application data.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "contactEmail": {
       "type": "string",
       "format": "email",
-      "description": "Contact email address. Required when userType is 'user'."
-    },
-    "contactName": {
-      "type": "string",
-      "description": "Name of the contact person"
+      "description": "Contact email address. May be required in some submitter scenarios."
     },
     "contactReference": {
       "type": "string",
-      "description": "Reference identifier for the contact"
+      "description": "Contact reference. Used as contact information in some submitter scenarios."
     },
     "contactPhoneNumber": {
       "type": "string",
-      "description": "Phone number of the contact person"
+      "description": "Contact phone number. Used as contact information in some submitter scenarios."
     },
     "inquiryMessage": {
       "type": "string",
@@ -71,16 +67,16 @@
     },
     "divApplicationNumber": {
       "type": "string",
-      "description": "Divisional application number. Required when dividedOrDivisional is set."
+      "description": "Application number for the divided or divisional application. Required when dividedOrDivisional is set."
     },
     "divApplicationDate": {
       "type": "string",
       "format": "date",
-      "description": "Date of the divisional application (ISO 8601 format: YYYY-MM-DD). Required when dividedOrDivisional is set."
+      "description": "Date of the divided or divisional application (ISO 8601 format: YYYY-MM-DD). Required when dividedOrDivisional is set."
     },
-    "fusNumber": {
+    "preliminarySearchReferenceNumber": {
       "type": "string",
-      "description": "FUS (Felles Utsendelses System) number"
+      "description": "Reference number for the preliminary search"
     },
     "earlierApplications": {
       "type": "array",
@@ -91,7 +87,7 @@
     },
     "agentOrApplicant": {
       "type": "string",
-      "description": "Indicator whether the submitter is an agent or applicant. When 'agent', agentCustomerNumber is required.",
+      "description": "Whether the request is submitted as an agent or as the applicant.",
       "enum": [
         "agent",
         "applicant"
@@ -100,7 +96,7 @@
     "agentCustomerNumber": {
       "type": "string",
       "pattern": "^\\d+$",
-      "description": "Customer number for the agent. Required when agentOrApplicant is 'agent'. Must contain only digits."
+      "description": "Customer number for the agent. Optional. If omitted, it may be retrieved automatically for known customers. Must contain only digits when provided."
     },
     "reasonApplicantNotSameAsInventor": {
       "type": "string",
@@ -114,18 +110,18 @@
     },
     "reasonApplicantNotSameAsInventorOtherExplanation": {
       "type": "string",
-      "description": "Free-text explanation required when reasonApplicantNotSameAsInventor is 'other'."
+      "description": "Free-text explanation. Required when reasonApplicantNotSameAsInventor is 'other'. Must be omitted for any other value."
     },
     "applicantsAndInventors": {
       "type": "array",
-      "description": "List of applicants and inventors associated with the patent",
+      "description": "List of applicants and inventors associated with the patent. Valid combinations are role=applicant with personOrOrganization=person or org, and role=inventor or both with personOrOrganization=person only.",
       "items": {
         "$ref": "#/definitions/PrefillApplicantOrInventor"
       }
     },
     "submitter": {
       "$ref": "#/definitions/PrefillSubmitter",
-      "description": "Submitter identity. Required when userType is 'user'. Must include firstName+lastName or companyName, plus address fields."
+      "description": "Optional submitter identity. Used to populate requestor details in some submitter scenarios."
     }
   },
   "allOf": [
@@ -190,25 +186,6 @@
     {
       "if": {
         "properties": {
-          "agentOrApplicant": {
-            "enum": [
-              "agent"
-            ]
-          }
-        },
-        "required": [
-          "agentOrApplicant"
-        ]
-      },
-      "then": {
-        "required": [
-          "agentCustomerNumber"
-        ]
-      }
-    },
-    {
-      "if": {
-        "properties": {
           "reasonApplicantNotSameAsInventor": {
             "const": "other"
           }
@@ -221,6 +198,35 @@
         "required": [
           "reasonApplicantNotSameAsInventorOtherExplanation"
         ]
+      }
+    },
+    {
+      "if": {
+        "anyOf": [
+          {
+            "not": {
+              "required": [
+                "reasonApplicantNotSameAsInventor"
+              ]
+            }
+          },
+          {
+            "properties": {
+              "reasonApplicantNotSameAsInventor": {
+                "not": {
+                  "const": "other"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "reasonApplicantNotSameAsInventorOtherExplanation"
+          ]
+        }
       }
     }
   ],
@@ -242,18 +248,18 @@
         },
         "country": {
           "type": "string",
-          "description": "Country code of the earlier application (ISO 3166-1 alpha-2 or alpha-3)"
+          "description": "Priority country or authority code. Use values from the priorityCountries options endpoint; the list may include authorities such as WIPO in addition to countries."
         },
         "caseId": {
           "type": "string",
-          "description": "Case identifier for the earlier application"
+          "description": "Case ID of the earlier application"
         }
       }
     },
     "PrefillApplicantOrInventor": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Represents an applicant or inventor in the patent application",
+      "description": "Represents an applicant or inventor in the patent application. role + personOrOrganization together determine the valid contract shape.",
       "required": [
         "role",
         "personOrOrganization"
@@ -261,7 +267,7 @@
       "properties": {
         "role": {
           "type": "string",
-          "description": "Role of the person/organization",
+          "description": "Role in the application. 'applicant' may be used with person or org. 'inventor' and 'both' are valid only together with personOrOrganization='person'.",
           "enum": [
             "applicant",
             "inventor",
@@ -270,7 +276,7 @@
         },
         "personOrOrganization": {
           "type": "string",
-          "description": "Type indicator: 'person' requires firstName and lastName; 'org' requires companyName",
+          "description": "Entity type. 'person' requires firstName, lastName, and country. 'org' requires companyName and country, and also companyNumber when country is 'NO'. 'org' is invalid when role is 'inventor' or 'both'.",
           "enum": [
             "person",
             "org"
@@ -288,6 +294,15 @@
           "type": "string",
           "description": "Company name. Required when personOrOrganization is 'org'."
         },
+        "companyNumber": {
+          "type": "string",
+          "pattern": "^\\d+$",
+          "description": "Organization number. Required when personOrOrganization is 'org' and country is 'NO'. Must contain only digits when provided."
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "Date of birth in ISO yyyy-MM-dd format. Optional in this schema. May be required for Norwegian persons."
+        },
         "streetAddress": {
           "type": "string",
           "description": "Street address"
@@ -302,11 +317,7 @@
         },
         "country": {
           "type": "string",
-          "description": "Country code (ISO 3166-1 alpha-2 or alpha-3)"
-        },
-        "isNorwegianPerson": {
-          "type": "boolean",
-          "description": "Indicator if the person is Norwegian (when personOrOrganization is 'person')"
+          "description": "Country code. Use values from the countries options endpoint in Swagger."
         }
       },
       "allOf": [
@@ -350,6 +361,27 @@
         {
           "if": {
             "properties": {
+              "personOrOrganization": {
+                "const": "org"
+              },
+              "country": {
+                "const": "NO"
+              }
+            },
+            "required": [
+              "personOrOrganization",
+              "country"
+            ]
+          },
+          "then": {
+            "required": [
+              "companyNumber"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
               "role": {
                 "enum": [
                   "inventor",
@@ -377,19 +409,23 @@
     "PrefillSubmitter": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Submitter identity. Required when userType is 'user'. Must include firstName+lastName (person) or companyName (organization), plus address fields.",
+      "description": "Optional submitter identity. Provide either firstName + lastName or companyName, together with streetAddress, postalCode, city, and country.",
       "properties": {
         "firstName": {
           "type": "string",
-          "description": "First name. Required for person submitters."
+          "description": "First name. Used together with lastName for person submitters."
         },
         "lastName": {
           "type": "string",
-          "description": "Last name. Required for person submitters."
+          "description": "Last name. Used together with firstName for person submitters."
         },
         "companyName": {
           "type": "string",
-          "description": "Company name. Optional — for organization submitters."
+          "description": "Company name. Alternative to firstName + lastName for organization submitters."
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "Date of birth in ISO yyyy-MM-dd format. Optional in this schema. May be required for Norwegian person submitters."
         },
         "streetAddress": {
           "type": "string",
@@ -405,7 +441,7 @@
         },
         "country": {
           "type": "string",
-          "description": "Country code (ISO 3166-1 alpha-2 or alpha-3)"
+          "description": "Country code. Use values from the countries options endpoint in Swagger."
         }
       }
     }

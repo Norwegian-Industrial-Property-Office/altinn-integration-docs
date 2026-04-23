@@ -7,10 +7,8 @@
 
     <xs:annotation>
         <xs:documentation>
-            XML Schema for the Patent Data Prefill API.
-            This schema defines the data structure for pre-filling patent application forms via the Altinn 3 API.
-            Runtime ingestion contract: JSON only (application/json).
-            This XSD is retained for documentation and legacy reference, not as an accepted runtime prefill content type.
+            Schema for prefilling patent application data.
+            The primary integration format is JSON (application/json); this XSD is provided for reference.
             Namespace: urn:patentstyret:patent:prefill
         </xs:documentation>
     </xs:annotation>
@@ -75,22 +73,17 @@
         <xs:sequence>
             <xs:element name="contactEmail" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Contact email address. Required when userType is 'user'.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="contactName" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>Name of the contact person</xs:documentation>
+                    <xs:documentation>Contact email address. May be required in some submitter scenarios.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="contactReference" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Reference identifier for the contact</xs:documentation>
+                    <xs:documentation>Contact reference. Used as contact information in some submitter scenarios.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="contactPhoneNumber" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Phone number of the contact person</xs:documentation>
+                    <xs:documentation>Contact phone number. Used as contact information in some submitter scenarios.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="inquiryMessage" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -145,17 +138,17 @@
             </xs:element>
             <xs:element name="divApplicationNumber" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Divisional application number. Required when dividedOrDivisional is provided.</xs:documentation>
+                    <xs:documentation>Application number for the divided or divisional application. Required when dividedOrDivisional is provided.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="divApplicationDate" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Date of the divisional application (ISO 8601 format: YYYY-MM-DD). Required when dividedOrDivisional is provided.</xs:documentation>
+                    <xs:documentation>Date of the divided or divisional application (ISO 8601 format: YYYY-MM-DD). Required when dividedOrDivisional is provided.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="fusNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+            <xs:element name="preliminarySearchReferenceNumber" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>FUS (Felles Utsendelses System) number</xs:documentation>
+                    <xs:documentation>Reference number for the preliminary search</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="earlierApplications" type="tns:EarlierApplicationsList" minOccurs="0" maxOccurs="1">
@@ -165,12 +158,12 @@
             </xs:element>
             <xs:element name="agentOrApplicant" type="tns:AgentOrApplicantType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Indicator whether the submitter is an agent or applicant. When 'agent', agentCustomerNumber is required.</xs:documentation>
+                    <xs:documentation>Indicator whether the submitter is an agent or applicant.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="agentCustomerNumber" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Customer number for the agent. Required when agentOrApplicant is 'agent'.</xs:documentation>
+                    <xs:documentation>Customer number for the agent. Optional. If omitted, it may be retrieved automatically for known customers. Must contain only digits when provided.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="reasonApplicantNotSameAsInventor" type="tns:ReasonApplicantNotSameAsInventorType" minOccurs="0" maxOccurs="1">
@@ -180,17 +173,17 @@
             </xs:element>
             <xs:element name="reasonApplicantNotSameAsInventorOtherExplanation" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Free-text explanation required when reasonApplicantNotSameAsInventor is 'other'.</xs:documentation>
+                    <xs:documentation>Free-text explanation. Required when reasonApplicantNotSameAsInventor is 'other'. Must be omitted for any other value. (XSD cannot express this conditional.)</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="applicantsAndInventors" type="tns:ApplicantsAndInventorsList" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>List of applicants and inventors associated with the patent</xs:documentation>
+                    <xs:documentation>List of applicants and inventors associated with the patent. Valid combinations are role=applicant with personOrOrganization=person or org, and role=inventor or both with personOrOrganization=person only.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="submitter" type="tns:PrefillSubmitter" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Submitter identity. Required when userType is 'user'. Must include firstName+lastName or companyName, plus address fields.</xs:documentation>
+                    <xs:documentation>Optional submitter identity. Used to populate requestor details in some submitter scenarios.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -218,7 +211,7 @@
             </xs:element>
             <xs:element name="country" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Country code of the earlier application (ISO 3166-1 alpha-2 or alpha-3)</xs:documentation>
+                    <xs:documentation>Priority country or authority code. Use values from the priorityCountries options endpoint; the list may include authorities such as WIPO in addition to countries.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="caseId" type="xs:string" minOccurs="1" maxOccurs="1">
@@ -241,17 +234,17 @@
 
     <xs:complexType name="PrefillApplicantOrInventor">
         <xs:annotation>
-            <xs:documentation>Represents an applicant or inventor in the patent application</xs:documentation>
+            <xs:documentation>Represents an applicant or inventor in the patent application. role + personOrOrganization together determine the valid contract shape.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="role" type="tns:RoleType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Role of the person/organization: 'applicant', 'inventor' or 'both'</xs:documentation>
+                    <xs:documentation>Role in the application. 'applicant' may be used with person or org. 'inventor' and 'both' are valid only together with personOrOrganization='person'.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="personOrOrganization" type="tns:PersonOrOrganizationType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Type indicator: 'person' for individual (requires firstName and lastName), 'org' for company/entity (requires companyName)</xs:documentation>
+                    <xs:documentation>Entity type. 'person' requires firstName, lastName, and country. 'org' requires companyName and country, and also companyNumber when country is 'NO'. 'org' is invalid when role is 'inventor' or 'both'.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="firstName" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -269,6 +262,16 @@
                     <xs:documentation>Company name. Required when personOrOrganization is 'org'.</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="companyNumber" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Organization number. Required when personOrOrganization is 'org' and country is 'NO'. Must contain only digits when provided.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="dateOfBirth" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Date of birth in ISO yyyy-MM-dd format. Optional in this schema. May be required for Norwegian persons.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="streetAddress" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>Street address</xs:documentation>
@@ -286,12 +289,7 @@
             </xs:element>
             <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Country code (ISO 3166-1 alpha-2 or alpha-3)</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="isNorwegianPerson" type="xs:boolean" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>Indicator if the person is Norwegian (when personOrOrganization is 'person')</xs:documentation>
+                    <xs:documentation>Country code. Use values from the countries options endpoint in Swagger.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -301,22 +299,27 @@
 
     <xs:complexType name="PrefillSubmitter">
         <xs:annotation>
-            <xs:documentation>Submitter identity. Required when userType is 'user'. Must include firstName+lastName (person) or companyName (organization), plus address fields.</xs:documentation>
+            <xs:documentation>Optional submitter identity. Provide either firstName + lastName or companyName, together with streetAddress, postalCode, city, and country.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="firstName" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>First name. Required for person submitters.</xs:documentation>
+                    <xs:documentation>First name. Used together with lastName for person submitters.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="lastName" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Last name. Required for person submitters.</xs:documentation>
+                    <xs:documentation>Last name. Used together with firstName for person submitters.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="companyName" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Company name. Optional — for organization submitters.</xs:documentation>
+                    <xs:documentation>Company name. Alternative to firstName + lastName for organization submitters.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="dateOfBirth" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Date of birth in ISO yyyy-MM-dd format. Optional in this schema. May be required for Norwegian person submitters.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="streetAddress" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -336,10 +339,9 @@
             </xs:element>
             <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Country code (ISO 3166-1 alpha-2 or alpha-3)</xs:documentation>
+                    <xs:documentation>Country code. Use values from the countries options endpoint in Swagger.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-
 </xs:schema>
