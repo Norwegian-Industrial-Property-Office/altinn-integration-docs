@@ -5,11 +5,14 @@
   "description": "Schema for prefilling patent application data.",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "contactEmail"
+  ],
   "properties": {
     "contactEmail": {
       "type": "string",
       "format": "email",
-      "description": "Contact email address. May be required in some submitter scenarios."
+      "description": "Contact email address. Required."
     },
     "contactReference": {
       "type": "string",
