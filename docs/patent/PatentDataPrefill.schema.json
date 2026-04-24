@@ -248,7 +248,7 @@
         },
         "country": {
           "type": "string",
-          "description": "Priority country or authority code. Use values from the priorityCountries options endpoint; the list may include authorities such as WIPO in addition to countries."
+          "description": "Priority country or authority code. Use the returned value from the priorityCountries options endpoint; labels are display text only. The list may include authorities such as WIPO in addition to countries."
         },
         "caseId": {
           "type": "string",
@@ -317,7 +317,7 @@
         },
         "country": {
           "type": "string",
-          "description": "Country code. Use values from the countries options endpoint in Swagger."
+          "description": "Country code. Use the returned value from the countries options endpoint in Swagger; labels are display text only."
         }
       },
       "allOf": [
@@ -441,7 +441,7 @@
         },
         "country": {
           "type": "string",
-          "description": "Country code. Use values from the countries options endpoint in Swagger."
+          "description": "Country code. Use the returned value from the countries options endpoint in Swagger; labels are display text only."
         }
       }
     }

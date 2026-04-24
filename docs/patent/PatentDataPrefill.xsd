@@ -211,7 +211,7 @@
             </xs:element>
             <xs:element name="country" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Priority country or authority code. Use values from the priorityCountries options endpoint; the list may include authorities such as WIPO in addition to countries.</xs:documentation>
+                    <xs:documentation>Priority country or authority code. Use the returned value from the priorityCountries options endpoint; labels are display text only. The list may include authorities such as WIPO in addition to countries.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="caseId" type="xs:string" minOccurs="1" maxOccurs="1">
@@ -289,7 +289,7 @@
             </xs:element>
             <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Country code. Use values from the countries options endpoint in Swagger.</xs:documentation>
+                    <xs:documentation>Country code. Use the returned value from the countries options endpoint in Swagger; labels are display text only.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -339,7 +339,7 @@
             </xs:element>
             <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Country code. Use values from the countries options endpoint in Swagger.</xs:documentation>
+                    <xs:documentation>Country code. Use the returned value from the countries options endpoint in Swagger; labels are display text only.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
