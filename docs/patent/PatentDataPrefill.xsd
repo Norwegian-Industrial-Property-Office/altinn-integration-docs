@@ -267,11 +267,6 @@
                     <xs:documentation>Organization number. Required when personOrOrganization is 'org' and country is 'NO'. Must contain only digits when provided.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="dateOfBirth" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>Date of birth in ISO yyyy-MM-dd format. Optional in this schema. May be required for Norwegian persons.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="streetAddress" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>Street address</xs:documentation>
@@ -315,11 +310,6 @@
             <xs:element name="companyName" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>Company name. Alternative to firstName + lastName for organization submitters.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="dateOfBirth" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>Date of birth in ISO yyyy-MM-dd format. Optional in this schema. May be required for Norwegian person submitters.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="streetAddress" type="xs:string" minOccurs="0" maxOccurs="1">
