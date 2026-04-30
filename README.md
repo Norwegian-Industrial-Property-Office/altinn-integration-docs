@@ -66,6 +66,7 @@ Each form has a unique prefill data model used when creating instances. The pref
 | Design                | `design`          | [TT02](https://pat.apps.tt02.altinn.no/pat/design/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/design/swagger/index.html)                                           | `designData-prefill`         | Coming soon                                                                                                                      | [Docs](docs/design/)             |
 | Trademark             | `varemerke`       | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)                                     | `varemerkeData-prefill`      | [JSON](docs/varemerke/VaremerkeDataPrefill.schema.json) ([XSD](docs/varemerke/VaremerkeDataPrefill.xsd))                         | [Docs](docs/varemerke/README.md) |
 | Ansvarsmerke          | `ansvarsmerke`    | [TT02](https://pat.apps.tt02.altinn.no/pat/ansvarsmerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/ansvarsmerke/swagger/index.html)                               | `ansvarsmerkeData-prefill`   | [JSON](docs/ansvarsmerke/AnsvarsmerkeDataPrefill.schema.json) ([XSD](docs/ansvarsmerke/AnsvarsmerkeDataPrefill.xsd))             | [Docs](docs/ansvarsmerke/README.md) |
+| EP Validation         | `ep-validering`   | [TT02](https://pat.apps.tt02.altinn.no/pat/ep-validering/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/ep-validering/swagger/index.html)                             | `ep-validering-prefill`      | [JSON](docs/ep-validation/EpValideringDataPrefill.schema.json) ([XSD](docs/ep-validation/EpValideringDataPrefill.xsd))           | [Docs](docs/ep-validation/)      |
 
 > **Note:** the **JSON Schema is the authoritative source**. The XSD is provided for documentation and XML-oriented tooling but does not express all conditional validation rules (e.g., role-dependent required fields). Always validate against the JSON Schema.
 
@@ -176,6 +177,5 @@ A sample Postman collection is available to demonstrate a typical flow using the
     - `altinnToken` - Your Altinn Runtime Token
     - `instanceOwnerPartyId` - Your party ID
 4. Run requests in sequence to create and manage instances
-
 
 

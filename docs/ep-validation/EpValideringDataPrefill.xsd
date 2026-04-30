@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="urn:patentstyret:ep-validering:prefill"
+           targetNamespace="urn:patentstyret:ep-validering:prefill"
+           elementFormDefault="qualified">
+  <xs:element name="ep-validering-prefill" type="tns:EpValideringDataPrefillType"/>
+  <xs:simpleType name="RequestTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="A1/A2"/>
+      <xs:enumeration value="T3"/>
+      <xs:enumeration value="T4-opposition"/>
+      <xs:enumeration value="T4-administrativeLimitation"/>
+      <xs:enumeration value="T9"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PersonOrOrgEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="person"/>
+      <xs:enumeration value="org"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="EpValideringDataPrefillType">
+    <xs:sequence>
+      <xs:element name="contactEmail" type="xs:string" minOccurs="1"/>
+      <xs:element name="contactPhone" type="xs:string" minOccurs="0"/>
+      <xs:element name="contactReference" type="xs:string" minOccurs="0"/>
+      <xs:element name="contactName" type="xs:string" minOccurs="0"/>
+      <xs:element name="epNumber" type="xs:string" minOccurs="1"/>
+      <xs:element name="requestType" type="tns:RequestTypeEnum" minOccurs="1"/>
+      <xs:element name="norwegianTranslatedTitle" type="xs:string" minOccurs="0"/>
+      <xs:element name="inquiryMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="isAgent" type="xs:boolean" minOccurs="0" nillable="true"/>
+      <xs:element name="submitter" type="tns:PrefillSubmitterType" minOccurs="0"/>
+      <xs:element name="additionalApplicantsBeyondEpoFetched" type="tns:PrefillApplicantType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PrefillApplicantType">
+    <xs:sequence>
+      <xs:element name="personOrOrg" type="tns:PersonOrOrgEnum" minOccurs="0"/>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="streetAddress" type="xs:string" minOccurs="0"/>
+      <xs:element name="postalCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="city" type="xs:string" minOccurs="0"/>
+      <xs:element name="country" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PrefillSubmitterType">
+    <xs:sequence>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyName" type="xs:string" minOccurs="0"/>
+      <xs:element name="streetAddress" type="xs:string" minOccurs="0"/>
+      <xs:element name="postalCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="city" type="xs:string" minOccurs="0"/>
+      <xs:element name="country" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
