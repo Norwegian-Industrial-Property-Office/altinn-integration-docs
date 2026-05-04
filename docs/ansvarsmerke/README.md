@@ -9,30 +9,6 @@ When creating an instance via multipart/form-data, use the field name: **`ansvar
 - [AnsvarsmerkeDataPrefill.schema.json](./AnsvarsmerkeDataPrefill.schema.json) — JSON Schema
 - [AnsvarsmerkeDataPrefill.xsd](./AnsvarsmerkeDataPrefill.xsd) — XSD Schema
 
-## Attachments
-
-Attachments are included as additional parts in the multipart/form-data request. The part name must match a data type defined in the form's application metadata.
-
-### Available Attachment Types
-
-| Part Name | Description | Allowed Types | Max Count |
-|-----------|-------------|---------------|-----------|
-| `fileAttachment-powerOfAttorney` | Power of attorney documents | PDF, DOCX, DOC, ODT | 20 |
-| `fileAttachment-trademark-image` | Trademark image (figurative/combined) | JPEG, PNG | 1 |
-
-### Example
-
-```http
---boundary
-Content-Disposition: form-data; name="fileAttachment-powerOfAttorney"; filename="fullmakt.pdf"
-Content-Type: application/pdf
-
-<binary-file-content>
---boundary--
-```
-
-See the [main README](../../README.md#creating-instances-with-prefill-data) for a complete multipart request example.
-
 ## Country Codes
 
 Use the Swagger options endpoint to look up valid country codes:
