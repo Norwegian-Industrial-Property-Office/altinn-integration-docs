@@ -20,7 +20,7 @@
     },
     "contactName": {
       "type": "string",
-      "description": "Contact person name."
+      "description": "Contact person name. Only used if the user is logged in as an org."
     },
     "contactReference": {
       "type": "string",
