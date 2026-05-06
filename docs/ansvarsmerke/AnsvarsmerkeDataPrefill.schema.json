@@ -6,7 +6,8 @@
   "type": "object",
   "required": [
     "contactEmail",
-    "applicants"
+    "applicants",
+    "trademarkType"
   ],
   "properties": {
     "agentOrApplicant": {

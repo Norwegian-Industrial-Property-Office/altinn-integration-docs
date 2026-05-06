@@ -1,4 +1,4 @@
-# Ansvarsmerke (Hallmark / Responsibility Mark)
+# Ansvarsmerke (Responsibility Mark)
 
 ## Prefill Field Name
 
@@ -25,9 +25,15 @@ For users who do not have a Norwegian national identity number or organization n
 {"instanceOwner":{"username":"test@example.no"}}
 ```
 
-To populate the Requestor with actual name and address data, include a `submitter` object in the prefill payload:
+To populate the Requestor with actual name and address data, include a `selfIdentifiedSubmitter` object in the prefill payload:
 
 Notes:
-- The `submitter` object is optional. Without it, the Requestor fields will be blank for self-identified users.
-- `submitter.customerNumber` is optional and sets the customer number directly without a SANT lookup.
-- The `submitter` uses the same field structure as applicants (role, name, address) — see the JSON schema for details.
+- `selfIdentifiedSubmitter.customerNumber` is optional and sets the customer number directly without a SANT lookup.
+
+## Attachments
+
+The app supports file attachments uploaded as part of the multipart/form-data request. To find the available attachment types, allowed MIME types, size limits, and max file counts, consult the application metadata endpoint:
+
+`GET /pat/ansvarsmerke/api/v1/applicationmetadata`
+
+Use the attachment `id` as the multipart field name when uploading.
