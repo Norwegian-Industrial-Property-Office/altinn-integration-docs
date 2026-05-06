@@ -57,9 +57,9 @@
       },
       "description": "Applicants included in the prefill payload."
     },
-    "submitter": {
-      "$ref": "#/$defs/ansvarsmerkeSubmitterPrefill",
-      "description": "Optional submitter (requestor) data. Required for self-identified (email) users since no national register data is available. For person/org users, register data takes precedence."
+    "selfIdentifiedSubmitter": {
+      "$ref": "#/$defs/ansvarsmerkeSelfIdentifiedSubmitterPrefill",
+      "description": "Optional self-identified submitter (requestor) data. Required for self-identified (email) users since no national register data is available. For person/org users, register data takes precedence."
     }
   },
   "$defs": {
@@ -162,7 +162,7 @@
       ],
       "additionalProperties": false
     },
-    "ansvarsmerkeSubmitterPrefill": {
+    "ansvarsmerkeSelfIdentifiedSubmitterPrefill": {
       "type": "object",
       "properties": {
         "role": {
