@@ -23,6 +23,38 @@ These forms are standard Altinn 3 applications. For general integration patterns
 | Test (TT02) | `https://pat.apps.tt02.altinn.no` |
 | Production  | `https://pat.apps.altinn.no`      |
 
+### Testing in TT02
+
+Do **not** use your real personal number or organization number in TT02. TT02 is connected to the [Tenor test population](https://www.skatteetaten.no/skjema/testdata/) — a shared synthetic dataset that simulates the Norwegian population.
+
+To get a test user:
+
+1. Open a form's login page in TT02.
+2. Choose **TestID** as the login method.
+3. Click **Find random user** (for a person) or **Find random CEO** (for an organization).
+4. Copy the displayed national identity number, then click **Authenticate**.
+
+**`partyId` in TT02 vs. Production**
+
+The `partyId` you receive in the Altinn token is the party associated with the authenticated user. In TT02, when you act on behalf of a Tenor user or company, the relevant `partyId` is the one for that test party — not necessarily the one in your personal token.
+
+After opening the form in the browser, the `partyId` appears in the URL just before the instance GUID:
+
+```
+https://pat.apps.tt02.altinn.no/pat/patent#/instance/51841311/2320f06c-47a1-4b52-83b4-5c4dc13c65b7/Task_FillOutForm/01_ContactInfo
+                                                       ^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                       partyId  instanceGuid
+```
+
+Example test credentials:
+
+| Field   | Value                                  |
+|---------|----------------------------------------|
+| TestID  | `04857194662`                          |
+| partyId | `51841311`                             |
+
+Use that `partyId` when creating instances or calling APIs on behalf of the test user. In **production**, use the `partyId` from your Altinn token as normal.
+
 ## Available Forms
 
 Each form has a unique prefill data model used when creating instances. The prefill data is automatically mapped to the actual form fields.
