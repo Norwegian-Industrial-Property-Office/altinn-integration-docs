@@ -12,11 +12,11 @@
     </xs:documentation>
   </xs:annotation>
 
-  <xs:element name="ansvarsmerkeData-prefill" type="tns:AnsvarsmerkeDataPrefillType"/>
+  <xs:element name="ansvarsmerkeData-prefill" type="tns:DataPrefillType"/>
 
-  <xs:complexType name="AnsvarsmerkeDataPrefillType">
+  <xs:complexType name="DataPrefillType">
     <xs:sequence>
-      <xs:element name="agentOrApplicant" type="tns:AnsvarsmerkeAgentOrApplicant" minOccurs="0">
+      <xs:element name="agentOrApplicant" type="tns:AgentOrApplicant" minOccurs="0">
         <xs:annotation>
           <xs:documentation>Specifies whether the submitter acts as the applicant or as an agent.</xs:documentation>
         </xs:annotation>
@@ -51,12 +51,12 @@
           <xs:documentation>Optional customer number for the submitting agent. Do not supply this when agentOrApplicant is applicant.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="paymentMethod" type="tns:AnsvarsmerkePaymentMethod" minOccurs="0">
+      <xs:element name="paymentMethod" type="tns:PaymentMethod" minOccurs="0">
         <xs:annotation>
           <xs:documentation>Preferred payment method.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="trademarkType" type="tns:AnsvarsmerkeTrademarkType" minOccurs="0">
+      <xs:element name="trademarkType" type="tns:TrademarkType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>Trademark type. Determines whether a trademark image attachment is expected.</xs:documentation>
         </xs:annotation>
@@ -76,7 +76,7 @@
           <xs:documentation>Applicants included in the prefill payload.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="submitter" type="tns:AnsvarsmerkeSubmitterPrefillType" minOccurs="0">
+      <xs:element name="submitter" type="tns:SelfIdentifiedSubmitterPrefillType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>Optional submitter (requestor) data. Required for self-identified (email) users since no national register data is available.</xs:documentation>
         </xs:annotation>
@@ -86,13 +86,13 @@
 
   <xs:complexType name="ApplicantsType">
     <xs:sequence>
-      <xs:element name="applicant" type="tns:AnsvarsmerkeApplicantPrefillType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="applicant" type="tns:ApplicantPrefillType" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="AnsvarsmerkeApplicantPrefillType">
+  <xs:complexType name="ApplicantPrefillType">
     <xs:sequence>
-      <xs:element name="role" type="tns:AnsvarsmerkeApplicantRole" minOccurs="0"/>
+      <xs:element name="role" type="tns:ApplicantRole" minOccurs="0"/>
       <xs:element name="firstName" type="xs:string" minOccurs="0"/>
       <xs:element name="lastName" type="xs:string" minOccurs="0"/>
       <xs:element name="companyName" type="xs:string" minOccurs="0"/>
@@ -108,9 +108,9 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="AnsvarsmerkeSubmitterPrefillType">
+  <xs:complexType name="SelfIdentifiedSubmitterPrefillType">
     <xs:sequence>
-      <xs:element name="role" type="tns:AnsvarsmerkeApplicantRole" minOccurs="0"/>
+      <xs:element name="role" type="tns:ApplicantRole" minOccurs="0"/>
       <xs:element name="firstName" type="xs:string" minOccurs="0"/>
       <xs:element name="lastName" type="xs:string" minOccurs="0"/>
       <xs:element name="companyName" type="xs:string" minOccurs="0"/>
@@ -131,14 +131,14 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:simpleType name="AnsvarsmerkeAgentOrApplicant">
+  <xs:simpleType name="AgentOrApplicant">
     <xs:restriction base="xs:string">
       <xs:enumeration value="applicant"/>
       <xs:enumeration value="agent"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="AnsvarsmerkePaymentMethod">
+  <xs:simpleType name="PaymentMethod">
     <xs:restriction base="xs:string">
       <xs:enumeration value="masterCard"/>
       <xs:enumeration value="visa"/>
@@ -146,7 +146,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="AnsvarsmerkeTrademarkType">
+  <xs:simpleType name="TrademarkType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="word"/>
       <xs:enumeration value="figurative"/>
@@ -154,7 +154,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="AnsvarsmerkeApplicantRole">
+  <xs:simpleType name="ApplicantRole">
     <xs:restriction base="xs:string">
       <xs:enumeration value="person"/>
       <xs:enumeration value="org"/>

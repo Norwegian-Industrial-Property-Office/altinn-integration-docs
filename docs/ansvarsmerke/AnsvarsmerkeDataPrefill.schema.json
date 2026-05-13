@@ -11,7 +11,7 @@
   ],
   "properties": {
     "agentOrApplicant": {
-      "$ref": "#/$defs/ansvarsmerkeAgentOrApplicant",
+      "$ref": "#/$defs/agentOrApplicant",
       "description": "Specifies whether the submitter acts as the applicant or as an agent."
     },
     "contactEmail": {
@@ -36,11 +36,11 @@
       "description": "Optional customer number for the submitting agent. Do not supply this when agentOrApplicant is applicant."
     },
     "paymentMethod": {
-      "$ref": "#/$defs/ansvarsmerkePaymentMethod",
+      "$ref": "#/$defs/paymentMethod",
       "description": "Preferred payment method."
     },
     "trademarkType": {
-      "$ref": "#/$defs/ansvarsmerkeTrademarkType",
+      "$ref": "#/$defs/trademarkType",
       "description": "Trademark type. Determines whether a trademark image attachment is expected."
     },
     "trademarkText": {
@@ -54,41 +54,41 @@
     "applicants": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/ansvarsmerkeApplicantPrefill"
+        "$ref": "#/$defs/applicantPrefill"
       },
       "description": "Applicants included in the prefill payload."
     },
     "selfIdentifiedSubmitter": {
-      "$ref": "#/$defs/ansvarsmerkeSelfIdentifiedSubmitterPrefill",
+      "$ref": "#/$defs/selfIdentifiedSubmitterPrefill",
       "description": "Optional self-identified submitter (requestor) data. Required for self-identified (email) users since no national register data is available. For person/org users, register data takes precedence."
     }
   },
   "$defs": {
-    "ansvarsmerkeAgentOrApplicant": {
+    "agentOrApplicant": {
       "type": "string",
       "enum": ["applicant", "agent"],
       "description": "Chooses whether the submitter is the applicant or an agent submitting on behalf of the applicant."
     },
-    "ansvarsmerkePaymentMethod": {
+    "paymentMethod": {
       "type": "string",
       "enum": ["masterCard", "visa", "invoice"],
       "description": "Supported payment methods for the application."
     },
-    "ansvarsmerkeTrademarkType": {
+    "trademarkType": {
       "type": "string",
       "enum": ["word", "figurative", "combined"],
       "description": "Supported trademark types for ansvarsmerke. Word = text only, figurative = image only, combined = text + image."
     },
-    "ansvarsmerkeApplicantRole": {
+    "applicantRole": {
       "type": "string",
       "enum": ["person", "org"],
       "description": "Applicant role, either a person or an organization."
     },
-    "ansvarsmerkeApplicantPrefill": {
+    "applicantPrefill": {
       "type": "object",
       "properties": {
         "role": {
-          "$ref": "#/$defs/ansvarsmerkeApplicantRole"
+          "$ref": "#/$defs/applicantRole"
         },
         "firstName": {
           "type": "string"
@@ -163,11 +163,11 @@
       ],
       "additionalProperties": false
     },
-    "ansvarsmerkeSelfIdentifiedSubmitterPrefill": {
+    "selfIdentifiedSubmitterPrefill": {
       "type": "object",
       "properties": {
         "role": {
-          "$ref": "#/$defs/ansvarsmerkeApplicantRole"
+          "$ref": "#/$defs/applicantRole"
         },
         "firstName": {
           "type": "string"
