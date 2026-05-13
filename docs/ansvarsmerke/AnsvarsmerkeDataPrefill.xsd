@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:patentstyret:ansvarsmerke:prefill"
+           xmlns:tns="urn:patentstyret:ansvarsmerke:prefill"
+           elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      XSD representation of the ansvarsmerke multipart prefill JSON schema.
+      The app expects the multipart part ansvarsmerkeData-prefill as application/json during instantiation.
+      This schema exists for XML-oriented tooling and documentation.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="ansvarsmerkeData-prefill" type="tns:DataPrefillType"/>
+
+  <xs:complexType name="DataPrefillType">
+    <xs:sequence>
+      <xs:element name="agentOrApplicant" type="tns:AgentOrApplicant" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Specifies whether the submitter acts as the applicant or as an agent.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactEmail">
+        <xs:annotation>
+          <xs:documentation>Contact email address.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[^@]+@[^@]+\.[^@]+" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="contactName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Contact person name.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactReference" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Customer reference for the submission.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactPhoneNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Contact phone number.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="agentCustomerNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional customer number for the submitting agent. Do not supply this when agentOrApplicant is applicant.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="paymentMethod" type="tns:PaymentMethod" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Preferred payment method.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trademarkType" type="tns:TrademarkType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Trademark type. Determines whether a trademark image attachment is expected.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="trademarkText" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Trademark text. Required for word and combined types.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="inquiryMessage" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional free-text message or note for the application.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="applicants" type="tns:ApplicantsType">
+        <xs:annotation>
+          <xs:documentation>Applicants included in the prefill payload.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="submitter" type="tns:SelfIdentifiedSubmitterPrefillType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional submitter (requestor) data. Required for self-identified (email) users since no national register data is available.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ApplicantsType">
+    <xs:sequence>
+      <xs:element name="applicant" type="tns:ApplicantPrefillType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ApplicantPrefillType">
+    <xs:sequence>
+      <xs:element name="role" type="tns:ApplicantRole" minOccurs="0"/>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="streetAddress" type="xs:string"/>
+      <xs:element name="postalCode" type="xs:string"/>
+      <xs:element name="city" type="xs:string"/>
+      <xs:element name="country" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Find approved country codes using options: countries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SelfIdentifiedSubmitterPrefillType">
+    <xs:sequence>
+      <xs:element name="role" type="tns:ApplicantRole" minOccurs="0"/>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="streetAddress" type="xs:string"/>
+      <xs:element name="postalCode" type="xs:string"/>
+      <xs:element name="city" type="xs:string"/>
+      <xs:element name="country" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Find approved country codes using options: countries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="customerNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional customer number for the submitter.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="AgentOrApplicant">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="applicant"/>
+      <xs:enumeration value="agent"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PaymentMethod">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="masterCard"/>
+      <xs:enumeration value="visa"/>
+      <xs:enumeration value="invoice"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TrademarkType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="word"/>
+      <xs:enumeration value="figurative"/>
+      <xs:enumeration value="combined"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ApplicantRole">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="person"/>
+      <xs:enumeration value="org"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

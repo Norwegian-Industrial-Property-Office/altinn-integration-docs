@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "AnsvarsmerkeDataPrefill.schema.json",
+  "title": "ansvarsmerkeData-prefill",
+  "description": "JSON schema for API-based prefill during ansvarsmerke multipart instantiation.",
+  "type": "object",
+  "required": [
+    "contactEmail",
+    "applicants",
+    "trademarkType"
+  ],
+  "properties": {
+    "agentOrApplicant": {
+      "$ref": "#/$defs/agentOrApplicant",
+      "description": "Specifies whether the submitter acts as the applicant or as an agent."
+    },
+    "contactEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact email address."
+    },
+    "contactName": {
+      "type": "string",
+      "description": "Contact person name. Only used if the user is logged in as an org."
+    },
+    "contactReference": {
+      "type": "string",
+      "description": "Customer reference for the submission."
+    },
+    "contactPhoneNumber": {
+      "type": "string",
+      "description": "Contact phone number."
+    },
+    "agentCustomerNumber": {
+      "type": "string",
+      "description": "Optional customer number for the submitting agent. Do not supply this when agentOrApplicant is applicant."
+    },
+    "paymentMethod": {
+      "$ref": "#/$defs/paymentMethod",
+      "description": "Preferred payment method."
+    },
+    "trademarkType": {
+      "$ref": "#/$defs/trademarkType",
+      "description": "Trademark type. Determines whether a trademark image attachment is expected."
+    },
+    "trademarkText": {
+      "type": "string",
+      "description": "Trademark text. Required for word and combined types."
+    },
+    "inquiryMessage": {
+      "type": "string",
+      "description": "Optional free-text message or note for the application."
+    },
+    "applicants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/applicantPrefill"
+      },
+      "description": "Applicants included in the prefill payload."
+    },
+    "selfIdentifiedSubmitter": {
+      "$ref": "#/$defs/selfIdentifiedSubmitterPrefill",
+      "description": "Optional self-identified submitter (requestor) data. Required for self-identified (email) users since no national register data is available. For person/org users, register data takes precedence."
+    }
+  },
+  "$defs": {
+    "agentOrApplicant": {
+      "type": "string",
+      "enum": ["applicant", "agent"],
+      "description": "Chooses whether the submitter is the applicant or an agent submitting on behalf of the applicant."
+    },
+    "paymentMethod": {
+      "type": "string",
+      "enum": ["masterCard", "visa", "invoice"],
+      "description": "Supported payment methods for the application."
+    },
+    "trademarkType": {
+      "type": "string",
+      "enum": ["word", "figurative", "combined"],
+      "description": "Supported trademark types for ansvarsmerke. Word = text only, figurative = image only, combined = text + image."
+    },
+    "applicantRole": {
+      "type": "string",
+      "enum": ["person", "org"],
+      "description": "Applicant role, either a person or an organization."
+    },
+    "applicantPrefill": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/applicantRole"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "companyNumber": {
+          "type": "string"
+        },
+        "streetAddress": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "Find list of approved country codes using options: countries"
+        }
+      },
+      "required": ["streetAddress", "postalCode", "city", "country"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "org"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["companyName"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "org"
+              },
+              "country": {
+                "enum": ["NO"]
+              }
+            },
+            "required": ["role", "country"]
+          },
+          "then": {
+            "required": ["companyNumber"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "person"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["firstName", "lastName"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "selfIdentifiedSubmitterPrefill": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/applicantRole"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "companyNumber": {
+          "type": "string"
+        },
+        "streetAddress": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "Find list of approved country codes using options: countries"
+        },
+        "customerNumber": {
+          "type": "string",
+          "description": "Optional customer number for the submitter."
+        }
+      },
+      "required": ["streetAddress", "postalCode", "city", "country"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "org"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["companyName"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "person"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["firstName", "lastName"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
