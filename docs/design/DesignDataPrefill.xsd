@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:patentstyret:design:prefill"
+           xmlns:tns="urn:patentstyret:design:prefill"
+           elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      XSD representation of the design multipart prefill JSON schema.
+      The app expects the multipart part designData-prefill as application/json during instantiation.
+      This schema exists for XML-oriented tooling and documentation.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="designData-prefill" type="tns:DataPrefillType"/>
+
+  <!-- ===== Root type ===== -->
+
+  <xs:complexType name="DataPrefillType">
+    <xs:sequence>
+      <xs:element name="agentOrApplicant" type="tns:AgentOrApplicant" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Specifies whether the submitter acts as the applicant or as an agent.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactInformation" type="tns:ContactInformationType">
+        <xs:annotation>
+          <xs:documentation>Contact information for the submission.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="inquiryMessage" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional free-text message or note for the application.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="request" type="tns:RequestPrefillType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Request details including Locarno classification, publication preferences, and payment method.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="applicants" type="tns:ParticipantsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Applicants included in the prefill payload. Required when agentOrApplicant is applicant.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="products" type="tns:ProductsType">
+        <xs:annotation>
+          <xs:documentation>Design products. At least one product is required.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="submitter" type="tns:SubmitterPrefillType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional submitter (requestor) data. Required for self-identified (email) users.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===== Contact information ===== -->
+
+  <xs:complexType name="ContactInformationType">
+    <xs:sequence>
+      <xs:element name="email">
+        <xs:annotation>
+          <xs:documentation>Contact email address.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[^@]+@[^@]+\.[^@]+"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="name" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Contact person name.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="reference" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Customer reference for the submission.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="phoneNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Contact phone number.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===== Request ===== -->
+
+  <xs:complexType name="RequestPrefillType">
+    <xs:sequence>
+      <xs:element name="mainClass" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Locarno main class number (e.g. "07").</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dividedDivisional" type="tns:DividedDivisionalType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Divided or divisional application details.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="publishOnSpecificDate" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Whether to publish design images on a specific date rather than immediately.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="publishImagesDate" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The date to publish design images (ISO 8601 format). Only relevant when publishOnSpecificDate is true.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="fusNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Preliminary investigation number, if applicable.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="paymentMethod" type="tns:PaymentMethod" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Preferred payment method.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DividedDivisionalType">
+    <xs:sequence>
+      <xs:element name="isDividedOrDivisional" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="applicationDate" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Date of the parent application (ISO 8601 format).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="applicationNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Application number of the parent application.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===== Participants (applicants + designers) ===== -->
+
+  <xs:complexType name="ParticipantsType">
+    <xs:sequence>
+      <xs:element name="participant" type="tns:ParticipantPrefillType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ParticipantPrefillType">
+    <xs:sequence>
+      <xs:element name="participantType" type="tns:ParticipantType" minOccurs="0"/>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Norwegian organization number (9 digits). Required for Norwegian organizations.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="companyName" type="xs:string" minOccurs="0"/>
+      <xs:element name="address" type="tns:AddressPrefillType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AddressPrefillType">
+    <xs:sequence>
+      <xs:element name="streetAddress" type="xs:string"/>
+      <xs:element name="postalCode" type="xs:string"/>
+      <xs:element name="city" type="xs:string"/>
+      <xs:element name="country" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Find approved country codes using options: countries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===== Products ===== -->
+
+  <xs:complexType name="ProductsType">
+    <xs:sequence>
+      <xs:element name="product" type="tns:ProductPrefillType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ProductPrefillType">
+    <xs:sequence>
+      <xs:element name="description" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Description of the design product.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="subClass" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Locarno sub-class (e.g. "0701").</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="classTextDescription" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Free-text description of the Locarno class.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="supplementaryExamination" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Whether supplementary examination is requested.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="previousApplications" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Whether this product has previous applications (priority claim).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="priority" type="tns:PriorityPrefillType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Priority claim details. Relevant when previousApplications is true.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="designers" type="tns:ParticipantsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Designers of this product.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="imageFileNames" type="tns:ImageFileNamesType">
+        <xs:annotation>
+          <xs:documentation>Filenames of design images. Each must match a file uploaded as fileAttachment-designs.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PriorityPrefillType">
+    <xs:sequence>
+      <xs:element name="applicationNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Application number of the priority application.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="country" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Country code of the priority application.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="applicationDate" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Filing date of the priority application (ISO 8601 format).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ImageFileNamesType">
+    <xs:sequence>
+      <xs:element name="fileName" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===== Submitter (self-identified users) ===== -->
+
+  <xs:complexType name="SubmitterPrefillType">
+    <xs:sequence>
+      <xs:element name="role" type="tns:ParticipantType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Whether the submitter is a person or organization.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyName" type="xs:string" minOccurs="0"/>
+      <xs:element name="companyNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="streetAddress" type="xs:string"/>
+      <xs:element name="postalCode" type="xs:string"/>
+      <xs:element name="city" type="xs:string"/>
+      <xs:element name="country" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Find approved country codes using options: countries.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="customerNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional customer number for the submitter.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===== Enums ===== -->
+
+  <xs:simpleType name="AgentOrApplicant">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="applicant"/>
+      <xs:enumeration value="agent"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PaymentMethod">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="masterCard"/>
+      <xs:enumeration value="visa"/>
+      <xs:enumeration value="invoice"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ParticipantType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="person"/>
+      <xs:enumeration value="organization"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
