@@ -2,6 +2,20 @@
 
 This documentation is for integrators who want to programmatically create forms in the Norwegian Industrial Property Office (Patentstyret) Altinn 3 system.
 
+## Table of Contents
+
+- [Altinn 3 Platform](#altinn-3-platform)
+- [Environments](#environments)
+  - [Testing in TT02](#testing-in-tt02)
+- [Available Forms](#available-forms)
+- [Creating Instances with Prefill Data](#creating-instances-with-prefill-data)
+  - [Example: Creating a Correspondence Instance](#example-creating-a-correspondence-instance)
+  - [Attachments](#attachments)
+- [After Instance Creation](#after-instance-creation)
+  - [Validate](#validate)
+  - [Open the form in Browser](#open-the-form-in-browser)
+- [Further Reading](#further-reading)
+
 These forms run on the **Altinn 3 Apps platform**. This repository documents the **Patentstyret-specific prefill data models** and form-specific details. For general platform concepts such as authentication, instance lifecycle, and the complete API reference, see the [Altinn 3 documentation](#altinn-3-platform).
 
 ## Altinn 3 Platform
@@ -126,6 +140,41 @@ Content-Type: application/pdf
 - The prefill field name (`{{app}}Data-prefill`) identifies which form's data model to prefill
 - The prefill JSON structure follows the form's schema (see Available Forms table above)
 - Attachment field names (e.g., `fileAttachment-MainLetter`) correspond to data types defined in each form's application metadata, they are found on the swagger page
+
+### Attachments
+
+Attachments are uploaded as additional parts in the multipart request. You can also upload them after instance creation using the [Data Elements API](https://docs.altinn.studio/en/api/apps/data-elements/).
+
+**Finding available attachment types:**
+
+Each form's Swagger page lists available data types. The ones you can upload attachments to are those with the prefix `fileAttachment-` (e.g., `fileAttachment-designs`, `fileAttachment-powerOfAttorney`, `fileAttachment-MainLetter`).
+
+To see the full list for a form, open its Swagger page (linked in the [Available Forms](#available-forms) table) and look at the data types section. It shows:
+
+| Column | Description |
+|--------|-------------|
+| DataTypeId | The name to use in the multipart `name` field |
+| Allowed number | Min and max number of files (e.g., `0-200`) |
+| MimeTypes | Accepted content types for that attachment type |
+
+**Multipart format for attachments:**
+
+```
+--boundary
+Content-Disposition: form-data; name="{{dataTypeId}}"; filename="myfile.pdf"
+Content-Type: application/pdf
+
+<binary-file-content>
+--boundary
+```
+
+**Key rules:**
+- The `name` field must exactly match a `fileAttachment-*` data type ID from the Swagger page
+- The `Content-Type` must be one of the allowed MIME types for that data type
+- The `filename` must include a valid file extension matching the content type
+- Filenames must be unique across all attachments in the instance
+- You can upload multiple files to the same data type (up to the max allowed number) by repeating the part with different filenames
+- Uploading to a data type not prefixed with `fileAttachment-` or exceeding the allowed count will be rejected
 
 
 ## After Instance Creation
