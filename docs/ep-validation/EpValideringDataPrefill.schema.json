@@ -1,0 +1,343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:patentstyret:ep-validering:prefill",
+  "title": "EpValideringDataPrefill",
+  "description": "Schema for external API prefill data for the ep-validering application.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contactEmail": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Contact email address for the submitter."
+    },
+    "contactPhone": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Contact phone number."
+    },
+    "contactReference": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Earlier reference from NIPO."
+    },
+    "contactName": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Contact person name. Used when submitter represents an organization."
+    },
+    "epNumber": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The European Patent number."
+    },
+    "requestType": {
+      "type": "string",
+      "enum": [
+        "A1/A2",
+        "T3",
+        "T4-opposition",
+        "T4-administrativeLimitation",
+        "T9"
+      ],
+      "description": "Type of validation request."
+    },
+    "norwegianTranslatedTitle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional Norwegian translated title. If omitted or empty, the title is auto-filled from EPO."
+    },
+    "inquiryMessage": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional inquiry message."
+    },
+    "isAgent": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Whether the submitter is acting as an agent/representative."
+    },
+    "submitter": {
+      "$ref": "#/$defs/PrefillSubmitter"
+    },
+    "additionalApplicantsBeyondEpoFetched": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "Applicants in addition to the primary applicants fetched from EPO.",
+      "items": {
+        "$ref": "#/$defs/PrefillApplicant"
+      }
+    }
+  },
+  "required": [
+    "contactEmail",
+    "epNumber",
+    "requestType"
+  ],
+  "$defs": {
+    "PrefillApplicant": {
+      "type": "object",
+      "description": "An applicant in addition to EPO-fetched applicants.",
+      "additionalProperties": false,
+      "properties": {
+        "personOrOrg": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "person",
+            "org",
+            null
+          ],
+          "description": "Applicant type. If omitted, inferred from whether companyName is provided."
+        },
+        "firstName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "First name (person applicants)."
+        },
+        "lastName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Last name (person applicants)."
+        },
+        "companyName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Company name (org applicants)."
+        },
+        "companyNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Company/organization number."
+        },
+        "streetAddress": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Street address."
+        },
+        "postalCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Postal/ZIP code."
+        },
+        "city": {
+          "type": "string",
+          "minLength": 1,
+          "description": "City."
+        },
+        "country": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Country code (use options endpoint value)."
+        }
+      },
+      "required": [
+        "streetAddress",
+        "city",
+        "country"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "personOrOrg": {
+                "const": "person"
+              }
+            },
+            "required": [
+              "personOrOrg"
+            ]
+          },
+          "then": {
+            "required": [
+              "firstName",
+              "lastName"
+            ],
+            "properties": {
+              "firstName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lastName": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "personOrOrg": {
+                "const": "org"
+              }
+            },
+            "required": [
+              "personOrOrg"
+            ]
+          },
+          "then": {
+            "required": [
+              "companyName"
+            ],
+            "properties": {
+              "companyName": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "personOrOrg": {
+                "const": "org"
+              },
+              "country": {
+                "const": "NO"
+              }
+            },
+            "required": [
+              "personOrOrg",
+              "country"
+            ]
+          },
+          "then": {
+            "required": [
+              "companyNumber"
+            ],
+            "properties": {
+              "companyNumber": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "not": {
+              "required": [
+                "personOrOrg"
+              ]
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "companyName"
+                ],
+                "properties": {
+                  "companyName": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              {
+                "required": [
+                  "firstName",
+                  "lastName"
+                ],
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "PrefillSubmitter": {
+      "type": "object",
+      "description": "Optional submitter identity. Used when instance owner is self-identified (username). For self-identified users, if submitter is provided, backend expects either firstName+lastName or companyName, and address fields streetAddress, postalCode, city, country.",
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "First name for person submitter."
+        },
+        "lastName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Last name for person submitter."
+        },
+        "companyName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Company name for organization submitter."
+        },
+        "streetAddress": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Street address."
+        },
+        "postalCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Postal/ZIP code."
+        },
+        "city": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "City."
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Country code."
+        }
+      }
+    }
+  }
+}
