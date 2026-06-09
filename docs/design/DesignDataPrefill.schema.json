@@ -1,0 +1,343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "DesignDataPrefill.schema.json",
+  "title": "designData-prefill",
+  "description": "JSON schema for API-based prefill during design multipart instantiation.",
+  "type": "object",
+  "required": [
+    "contactInformation",
+    "products"
+  ],
+  "properties": {
+    "agentOrApplicant": {
+      "$ref": "#/$defs/agentOrApplicant",
+      "description": "Specifies whether the submitter acts as the applicant or as an agent."
+    },
+    "contactInformation": {
+      "$ref": "#/$defs/contactInformationPrefill",
+      "description": "Contact information for the submission."
+    },
+    "inquiryMessage": {
+      "type": "string",
+      "description": "Optional free-text message or note for the application."
+    },
+    "request": {
+      "$ref": "#/$defs/requestPrefill",
+      "description": "Request details including Locarno classification, publication preferences, and payment method."
+    },
+    "applicants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/participantPrefill"
+      },
+      "description": "Applicants included in the prefill payload. Required when agentOrApplicant is applicant."
+    },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/productPrefill"
+      },
+      "description": "Design products. At least one product is required, and each product must reference at least one image filename."
+    },
+    "submitter": {
+      "$ref": "#/$defs/submitterPrefill",
+      "description": "Optional submitter (requestor) data. Required for self-identified (email) users since no national register data is available. For person/org users, register data takes precedence."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "agentOrApplicant": {
+      "type": "string",
+      "enum": ["applicant", "agent"],
+      "description": "Chooses whether the submitter is the applicant or an agent submitting on behalf of the applicant."
+    },
+    "paymentMethod": {
+      "type": "string",
+      "enum": ["masterCard", "visa", "invoice"],
+      "description": "Supported payment methods for the application."
+    },
+    "participantType": {
+      "type": "string",
+      "enum": ["person", "organization"],
+      "description": "Participant type, either a person or an organization."
+    },
+    "contactInformationPrefill": {
+      "type": "object",
+      "required": ["email"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact email address."
+        },
+        "name": {
+          "type": "string",
+          "description": "Contact person name."
+        },
+        "reference": {
+          "type": "string",
+          "description": "Customer reference for the submission."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Contact phone number."
+        }
+      },
+      "additionalProperties": false
+    },
+    "requestPrefill": {
+      "type": "object",
+      "properties": {
+        "mainClass": {
+          "type": "string",
+          "description": "Locarno main class number (e.g. \"07\")."
+        },
+        "dividedDivisional": {
+          "$ref": "#/$defs/dividedDivisionalPrefill",
+          "description": "Divided or divisional application details."
+        },
+        "publishOnSpecificDate": {
+          "type": "boolean",
+          "description": "Whether to publish design images on a specific date rather than immediately."
+        },
+        "publishImagesDate": {
+          "type": "string",
+          "description": "The date to publish design images (ISO 8601 format, e.g. \"2026-03-05\"). Only relevant when publishOnSpecificDate is true."
+        },
+        "fusNumber": {
+          "type": "string",
+          "description": "Preliminary investigation (forundersøkelse) number, if applicable."
+        },
+        "paymentMethod": {
+          "$ref": "#/$defs/paymentMethod",
+          "description": "Preferred payment method."
+        }
+      },
+      "additionalProperties": false
+    },
+    "dividedDivisionalPrefill": {
+      "type": "object",
+      "properties": {
+        "isDividedOrDivisional": {
+          "type": "boolean",
+          "description": "Whether this is a divided or divisional application."
+        },
+        "applicationDate": {
+          "type": "string",
+          "description": "Date of the parent application (ISO 8601 format)."
+        },
+        "applicationNumber": {
+          "type": "string",
+          "description": "Application number of the parent application."
+        }
+      },
+      "additionalProperties": false
+    },
+    "addressPrefill": {
+      "type": "object",
+      "required": ["streetAddress", "postalCode", "city", "country"],
+      "properties": {
+        "streetAddress": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "Find list of approved country codes using options: countries."
+        }
+      },
+      "additionalProperties": false
+    },
+    "participantPrefill": {
+      "type": "object",
+      "properties": {
+        "participantType": {
+          "$ref": "#/$defs/participantType"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "companyNumber": {
+          "type": "string",
+          "description": "Norwegian organization number (9 digits). Required for Norwegian organizations."
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "address": {
+          "$ref": "#/$defs/addressPrefill"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "participantType": {
+                "const": "organization"
+              }
+            },
+            "required": ["participantType"]
+          },
+          "then": {
+            "required": ["companyName"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "participantType": {
+                "const": "person"
+              }
+            },
+            "required": ["participantType"]
+          },
+          "then": {
+            "required": ["firstName", "lastName"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "productPrefill": {
+      "type": "object",
+      "required": ["imageFileNames"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Description of the design product."
+        },
+        "subClass": {
+          "type": "string",
+          "description": "Locarno sub-class (e.g. \"0701\")."
+        },
+        "classTextDescription": {
+          "type": "string",
+          "description": "Free-text description of the Locarno class."
+        },
+        "supplementaryExamination": {
+          "type": "boolean",
+          "description": "Whether supplementary examination is requested."
+        },
+        "previousApplications": {
+          "type": "boolean",
+          "description": "Whether this product has previous applications (priority claim)."
+        },
+        "priority": {
+          "$ref": "#/$defs/priorityPrefill",
+          "description": "Priority claim details. Relevant when previousApplications is true."
+        },
+        "designers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/participantPrefill"
+          },
+          "description": "Designers of this product."
+        },
+        "imageFileNames": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "Filenames of design images. Each filename must match a file uploaded as fileAttachment-designs in the multipart request."
+        }
+      },
+      "additionalProperties": false
+    },
+    "priorityPrefill": {
+      "type": "object",
+      "properties": {
+        "applicationNumber": {
+          "type": "string",
+          "description": "Application number of the priority application."
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code of the priority application."
+        },
+        "applicationDate": {
+          "type": "string",
+          "description": "Filing date of the priority application (ISO 8601 format)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "submitterPrefill": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/participantType",
+          "description": "Whether the submitter is a person or organization."
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "companyNumber": {
+          "type": "string"
+        },
+        "streetAddress": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "description": "Find list of approved country codes using options: countries."
+        },
+        "customerNumber": {
+          "type": "string",
+          "description": "Optional customer number for the submitter."
+        }
+      },
+      "required": ["streetAddress", "postalCode", "city", "country"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "organization"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["companyName"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "person"
+              }
+            },
+            "required": ["role"]
+          },
+          "then": {
+            "required": ["firstName", "lastName"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}
