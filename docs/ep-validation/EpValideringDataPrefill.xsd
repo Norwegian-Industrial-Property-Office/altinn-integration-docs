@@ -3,7 +3,7 @@
            xmlns:tns="urn:patentstyret:ep-validering:prefill"
            targetNamespace="urn:patentstyret:ep-validering:prefill"
            elementFormDefault="qualified">
-  <xs:element name="ep-validering-prefill" type="tns:EpValideringDataPrefillType"/>
+  <xs:element name="epValideringData-prefill" type="tns:EpValideringDataPrefillType"/>
   <xs:simpleType name="RequestTypeEnum">
     <xs:restriction base="xs:string">
       <xs:enumeration value="A1/A2"/>

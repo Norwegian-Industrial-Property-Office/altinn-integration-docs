@@ -1,7 +1,7 @@
 # EP Validation
 
 ## Prefill Field Name
-When creating an instance via multipart/form-data, use the field name: **`ep-validering-prefill`**
+When creating an instance via multipart/form-data, use the field name: **`epValideringData-prefill`**
 
 ## Prefill Schema
 - [EpValideringDataPrefill.schema.json](./EpValideringDataPrefill.schema.json) — JSON Schema
@@ -49,5 +49,5 @@ This is used to populate requestor/contact identity in the form flow.
 `contactReference` is the earlier reference from NIPO (if available).
 
 ## Attachments
-Attachments are sent as additional multipart parts in the same request as `instance` + `ep-validering-prefill`.
+Attachments are sent as additional multipart parts in the same request as `instance` + `epValideringData-prefill`.
 - `fileAttachment-epClaims` is required in current form validation flow.
