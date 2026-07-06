@@ -50,7 +50,7 @@
     },
     "paymentMethod": {
       "type": "string",
-      "enum": ["card", "invoice"],
+      "enum": ["visa", "masterCard", "invoice"],
       "description": "Preferred payment method. If omitted, user selects in the form."
     },
     "claimants": {

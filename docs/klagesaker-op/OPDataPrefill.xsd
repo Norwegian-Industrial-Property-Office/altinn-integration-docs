@@ -195,7 +195,8 @@
 
   <xs:simpleType name="PaymentMethodType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="card"/>
+      <xs:enumeration value="visa"/>
+      <xs:enumeration value="masterCard"/>
       <xs:enumeration value="invoice"/>
     </xs:restriction>
   </xs:simpleType>
