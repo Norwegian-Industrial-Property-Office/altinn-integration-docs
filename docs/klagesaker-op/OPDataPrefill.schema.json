@@ -1,0 +1,230 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OPDataPrefill",
+  "description": "Prefill payload for klagesaker-op (claims and complaints). Send as multipart data element with type 'klagesaker-opData-prefill' when creating an instance via API.",
+  "type": "object",
+  "required": ["contactEmail", "domain"],
+  "properties": {
+    "contactEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact email for the submission. Required."
+    },
+    "contactName": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "Contact person name."
+    },
+    "contactReference": {
+      "type": "string",
+      "maxLength": 20,
+      "description": "Internal reference for the submitter"
+    },
+    "contactPhoneNumber": {
+      "type": "string",
+      "maxLength": 20,
+      "description": "Contact phone number."
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["trademark", "patent", "design", "companyNameComplaint"],
+      "description": "IP domain for the claim/complaint. Required."
+    },
+    "caseId": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "IP case/application number. Required when domain is not 'companyNameComplaint'."
+    },
+    "claimType": {
+      "type": "string",
+      "description": "Type of claim. Allowed values depend on domain — see conditional validation below."
+    },
+    "requestMessage": {
+      "type": "string",
+      "description": "Free-text message describing the claim/complaint."
+    },
+    "agentOrClaimant": {
+      "type": "string",
+      "enum": ["claimant", "agent"],
+      "description": "Role of the logged-in user. 'claimant' = submitter is the claimant themselves. 'agent' = submitter acts as representative/agent on behalf of the claimant(s)."
+    },
+    "paymentMethod": {
+      "type": "string",
+      "enum": ["card", "invoice"],
+      "description": "Preferred payment method. If omitted, user selects in the form."
+    },
+    "claimants": {
+      "type": "array",
+      "description": "List of claimants. At least one is required when agentOrClaimant is 'agent'.",
+      "items": {
+        "type": "object",
+        "required": ["entityType"],
+        "properties": {
+          "entityType": {
+            "type": "string",
+            "enum": ["person", "org"],
+            "description": "Type of claimant entity. 'person' for individuals, 'org' for organizations."
+          },
+          "firstName": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Required for person."
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Required for person."
+          },
+          "companyName": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Required for org."
+          },
+          "companyNumber": {
+            "type": "string",
+            "pattern": "^[0-9]{9}$",
+            "description": "Norwegian organization number (9 digits)."
+          },
+          "streetAddress": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "postalCode": {
+            "type": "string",
+            "maxLength": 155
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code."
+          },
+          "customerNumber": {
+            "type": "string",
+            "description": "Patentstyret customer number."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "entityType": { "const": "person" } }
+            },
+            "then": {
+              "required": ["firstName", "lastName"]
+            }
+          },
+          {
+            "if": {
+              "properties": { "entityType": { "const": "org" } }
+            },
+            "then": {
+              "required": ["companyName"]
+            }
+          }
+        ]
+      }
+    },
+    "companyNameComplaint": {
+      "type": "object",
+      "description": "Company name complaint details. Required when domain is 'companyNameComplaint'.",
+      "required": ["companyNumber"],
+      "properties": {
+        "companyNumber": {
+          "type": "string",
+          "pattern": "^[0-9]{9}$",
+          "description": "Organization number of the company being complained about."
+        },
+        "companyRegisteredOrChangedDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the company was registered or changed in the business register (ISO 8601, e.g. '2026-06-10')."
+        },
+        "kfir": {
+          "type": "boolean",
+          "description": "Whether this is a complaint to KFIR (the Board of Appeal)."
+        },
+        "reasons": {
+          "type": "array",
+          "description": "Grounds for the company name complaint.",
+          "items": {
+            "type": "object",
+            "required": ["reasonType", "reasonInfo"],
+            "properties": {
+              "reasonType": {
+                "type": "string",
+                "enum": ["companyName", "trademark", "other"],
+                "description": "'companyName' = conflicting company name (org number), 'trademark' = conflicting trademark application, 'other' = other grounds."
+              },
+              "reasonInfo": {
+                "type": "string",
+                "description": "The org number or application number that conflicts."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "domain": { "const": "trademark" } }
+      },
+      "then": {
+        "properties": {
+          "claimType": {
+            "enum": ["reinstatement", "protest", "adminTransfer", "tmAlteration", "opposition", "adminInvalidationPriority", "adminDeletion", "kfir", "adminReview"]
+          }
+        },
+        "required": ["caseId"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "domain": { "const": "patent" } }
+      },
+      "then": {
+        "properties": {
+          "claimType": {
+            "enum": ["reinstatement", "protest", "opposition", "adminLimitation", "adminReview", "kfir"]
+          }
+        },
+        "required": ["caseId"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "domain": { "const": "design" } }
+      },
+      "then": {
+        "properties": {
+          "claimType": {
+            "enum": ["reinstatement", "protest", "adminReview", "kfir"]
+          }
+        },
+        "required": ["caseId"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "domain": { "const": "companyNameComplaint" } }
+      },
+      "then": {
+        "required": ["companyNameComplaint"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "agentOrClaimant": { "const": "agent" } }
+      },
+      "then": {
+        "properties": {
+          "claimants": { "minItems": 1 }
+        },
+        "required": ["claimants"]
+      }
+    }
+  ]
+}

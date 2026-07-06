@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Simplified data model for consumers to prefill the Klagesaker (claims and complaints) form via multipart instantiation.
+      Requestor/submitter is not included - it is automatically filled from the logged-in user via ER/DSF registers.
+      Agent data is likewise not part of the payload; only the agentOrClaimant role is passed and the app derives agent
+      details from the authenticated user.
+      Note: the JSON Schema is the authoritative source. This XSD does not express conditional rules such as
+      domain-dependent claimType values or role-dependent required fields.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Root Element -->
+  <xs:element name="OPDataPrefill" type="OPDataPrefillType"/>
+
+  <!-- Root Type -->
+  <xs:complexType name="OPDataPrefillType">
+    <xs:sequence>
+      <xs:element name="contactEmail" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Contact email for the submission. Required.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactName" type="String255" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Name of contact person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactReference" type="String20" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Internal reference for the submitter.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactPhoneNumber" type="String20" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Phone number of contact person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="domain" type="DomainType">
+        <xs:annotation>
+          <xs:documentation>IP domain for the claim/complaint. Required.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="caseId" type="String255" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>IP case/application number. Required when domain is not 'companyNameComplaint'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="claimType" type="ClaimTypeType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Type of claim. Allowed values depend on domain:
+            trademark: reinstatement, protest, adminTransfer, tmAlteration, opposition, adminInvalidationPriority, adminDeletion, kfir, adminReview.
+            patent: reinstatement, protest, opposition, adminLimitation, adminReview, kfir.
+            design: reinstatement, protest, adminReview, kfir.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="requestMessage" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Free-text message describing the claim/complaint.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="agentOrClaimant" type="AgentOrClaimantType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Role of the logged-in user. 'claimant' = submitter is the claimant themselves. 'agent' = submitter acts as representative on behalf of the claimant(s). When 'agent', at least one claimant is required.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="paymentMethod" type="PaymentMethodType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Preferred payment method. If omitted, user selects in the form.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="claimants" type="ClaimantType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>List of claimants. At least one is required when agentOrClaimant is 'agent'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="companyNameComplaint" type="CompanyNameComplaintType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Company name complaint details. Required when domain is 'companyNameComplaint'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Claimant Type -->
+  <xs:complexType name="ClaimantType">
+    <xs:sequence>
+      <xs:element name="entityType" type="EntityTypeType">
+        <xs:annotation>
+          <xs:documentation>'person' for individuals, 'org' for organizations. Person requires firstName+lastName; org requires companyName.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="firstName" type="String255" minOccurs="0"/>
+      <xs:element name="lastName" type="String255" minOccurs="0"/>
+      <xs:element name="companyName" type="String255" minOccurs="0"/>
+      <xs:element name="companyNumber" type="OrgNumberType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Norwegian organization number (9 digits).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="streetAddress" type="String255" minOccurs="0"/>
+      <xs:element name="postalCode" type="String155" minOccurs="0"/>
+      <xs:element name="city" type="String255" minOccurs="0"/>
+      <xs:element name="country" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>ISO 3166-1 alpha-2 country code (e.g., 'NO').</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="customerNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Patentstyret customer number.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- CompanyNameComplaint Type -->
+  <xs:complexType name="CompanyNameComplaintType">
+    <xs:sequence>
+      <xs:element name="companyNumber" type="OrgNumberType">
+        <xs:annotation>
+          <xs:documentation>Organization number of the company being complained about.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="companyRegisteredOrChangedDate" type="xs:date" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Date the company was registered or changed in the business register (ISO 8601, e.g. '2026-06-10').</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="kfir" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Whether this is a complaint to KFIR (the Board of Appeal).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="reasons" type="ReasonType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Grounds for the company name complaint.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Reason Type -->
+  <xs:complexType name="ReasonType">
+    <xs:sequence>
+      <xs:element name="reasonType" type="ReasonTypeEnum">
+        <xs:annotation>
+          <xs:documentation>'companyName' = conflicting company name (org number), 'trademark' = conflicting trademark application, 'other' = other grounds.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="reasonInfo" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The org number or application number that conflicts.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Enumerations -->
+  <xs:simpleType name="DomainType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="trademark"/>
+      <xs:enumeration value="patent"/>
+      <xs:enumeration value="design"/>
+      <xs:enumeration value="companyNameComplaint"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ClaimTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="reinstatement"/>
+      <xs:enumeration value="protest"/>
+      <xs:enumeration value="adminTransfer"/>
+      <xs:enumeration value="tmAlteration"/>
+      <xs:enumeration value="opposition"/>
+      <xs:enumeration value="adminInvalidationPriority"/>
+      <xs:enumeration value="adminDeletion"/>
+      <xs:enumeration value="adminLimitation"/>
+      <xs:enumeration value="kfir"/>
+      <xs:enumeration value="adminReview"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AgentOrClaimantType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="claimant"/>
+      <xs:enumeration value="agent"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PaymentMethodType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="card"/>
+      <xs:enumeration value="invoice"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="EntityTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="person"/>
+      <xs:enumeration value="org"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ReasonTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="companyName"/>
+      <xs:enumeration value="trademark"/>
+      <xs:enumeration value="other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- String length restrictions -->
+  <xs:simpleType name="String20">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="String155">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="155"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="String255">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OrgNumberType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{9}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
