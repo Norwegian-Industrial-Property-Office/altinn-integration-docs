@@ -1,68 +1,57 @@
 # Klagesaker (Claims and Complaints)
 
-Claims and complaints to the Norwegian Industrial Property Office (NIPO/Patentstyret) and the Norwegian Board of Appeal for Industrial Property Rights (KFIR). The form also handles complaints about company names registered in the Register of Business Enterprises (Foretaksregisteret).
+Claims and complaints to the Norwegian Industrial Property Office (NIPO/Patentstyret) and the Norwegian Board of Appeal for Industrial Property Rights (KFIR), including complaints about company names in the Register of Business Enterprises.
 
 ## Prefill Field Name
 
 When creating an instance via multipart/form-data, use the field name: **`klagesaker-opData-prefill`**
 
-Both `application/json` and `application/xml` content types are supported.
-
 ## Prefill Schema
 
-- [OPDataPrefill.schema.json](./OPDataPrefill.schema.json) — JSON Schema (authoritative, includes examples and conditional validation)
-- [OPDataPrefill.xsd](./OPDataPrefill.xsd) — XSD Schema (documentation/XML tooling; does not express all conditional rules)
+- [OPDataPrefill.schema.json](./OPDataPrefill.schema.json) — JSON Schema
+- [OPDataPrefill.xsd](./OPDataPrefill.xsd) — XSD Schema
 
 ## Domains and Claim Types
-
-The `domain` field selects the type of case, and determines which `claimType` values are valid:
 
 | `domain` | Valid `claimType` values |
 |---|---|
 | `trademark` | `reinstatement`, `protest`, `adminTransfer`, `tmAlteration`, `opposition`, `adminInvalidationPriority`, `adminDeletion`, `kfir`, `adminReview` |
 | `patent` | `reinstatement`, `protest`, `opposition`, `adminLimitation`, `adminReview`, `kfir` |
 | `design` | `reinstatement`, `protest`, `adminReview`, `kfir` |
-| `companyNameComplaint` | — (use the `companyNameComplaint` object instead) |
+| `companyNameComplaint` | — use the `companyNameComplaint` object instead |
 
-- For `trademark`, `patent`, and `design`, `caseId` (the IP application/registration number) is **required**. The app looks up case details automatically.
-- For `companyNameComplaint`, the `companyNameComplaint` object is **required** and `caseId`/`claimType` are not used.
+- For `trademark`, `patent` and `design`, `caseId` is required and case details are looked up automatically.
+- For `companyNameComplaint`, the `companyNameComplaint` object is required; `caseId` and `claimType` are not used.
 
-## Roles: Agent vs Claimant
+## Roles
 
-The `agentOrClaimant` field describes the role of the **logged-in submitter**:
+`agentOrClaimant` describes the role of the logged-in submitter:
 
 | Value | Behavior |
 |---|---|
-| `claimant` | The submitter is a claimant. The app automatically inserts the logged-in person/organization as the **first claimant** row. Any `claimants[]` from the prefill are added after. |
-| `agent` | The submitter acts as a representative. The app automatically creates the agent from the logged-in user. At least one entry in `claimants[]` is **required**. |
+| `claimant` | The logged-in user is inserted as the first claimant. Any `claimants[]` entries are added after. |
+| `agent` | The agent is created from the logged-in user. At least one entry in `claimants[]` is required. |
 
-> **Important:** Do **not** send agent/submitter details in the payload. The submitter (requestor) and agent information is always derived from the authenticated Altinn user via the national registers (ER/DSF).
+Do not send agent or submitter details in the payload — they are always derived from the authenticated Altinn user.
 
 ## Payment
 
 `paymentMethod` can be `card` or `invoice`. If omitted, the user chooses in the form.
 
-## Attachments
-
-See the Swagger documentation for available file attachment data types, allowed MIME types, and max file counts:
-
-- [Swagger (TT02)](https://pat.apps.tt02.altinn.no/pat/klagesaker-op/swagger/index.html)
-- [Swagger (Prod)](https://pat.apps.altinn.no/pat/klagesaker-op/swagger/index.html)
-
-Uploaded attachments are **automatically tagged** with the correct document type. Integrators do not need to set tags manually.
-
 ## Country Codes
 
-For valid country codes, use the options endpoint:
+Use the Swagger options endpoint to look up valid country codes:
 
-```
-GET /pat/klagesaker-op/api/options/countries?language=nb
-```
+`GET /pat/klagesaker-op/api/options/countries?language=nb`
 
-Use the returned `value` (e.g. `"NO"`) in prefill data, not the `label`.
+- Use the returned `value` in the prefill data model, not the `label`
 
-## Full Data Model Reference
+## Attachments
 
-See [OPDataPrefill.schema.json](./OPDataPrefill.schema.json) for the complete data model with all fields, types, conditional requirements, and inline examples.
+The app supports file attachments uploaded as part of the multipart/form-data request. To find the available attachment types, allowed MIME types, size limits, and max file counts, consult the application metadata endpoint:
+
+`GET /pat/klagesaker-op/api/v1/applicationmetadata`
+
+Use the attachment `id` as the multipart field name when uploading. Uploaded attachments are tagged with the correct document type automatically.
 
 See the [main README](../../README.md#creating-instances-with-prefill-data) for a complete multipart request example.
