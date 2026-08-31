@@ -107,7 +107,7 @@
         },
         "fusNumber": {
           "type": "string",
-          "description": "Preliminary investigation (forundersøkelse) number, if applicable."
+          "description": "DEPRECATED! FUS number for the application. This field is deprecated and should not be used."
         },
         "paymentMethod": {
           "$ref": "#/$defs/paymentMethod",
