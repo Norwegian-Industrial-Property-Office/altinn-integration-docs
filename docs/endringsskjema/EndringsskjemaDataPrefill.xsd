@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Simplified data model for consumers to prefill the Endringsskjema (changes, assignment, lien, license) form
+      via multipart instantiation.
+      Requestor/submitter is not included - it is automatically filled from the logged-in user via ER/DSF registers.
+      Agent data is likewise not part of the payload; only the role is passed and the app derives agent details
+      from the authenticated user.
+      Note: the JSON Schema is the authoritative source. This XSD does not express conditional rules such as
+      domain-dependent requestType and rightType values, or role-dependent required fields.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Root Element -->
+  <xs:element name="endringsskjemaData-prefill" type="EndringsskjemaDataPrefillType"/>
+
+  <!-- Root Type -->
+  <xs:complexType name="EndringsskjemaDataPrefillType">
+    <xs:sequence>
+      <xs:element name="domain" type="DomainType">
+        <xs:annotation>
+          <xs:documentation>IP domain the change applies to. Required.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="requestType" type="RequestTypeType">
+        <xs:annotation>
+          <xs:documentation>
+            Type of change. Required. Allowed values depend on domain:
+            patent: nameAddress, fusion, agentChange, lien, license, deleteOrDraw, other.
+            trademark: nameAddress, fusion, agentChange, lien, license, goodsAndServices, deleteOrDraw, other.
+            design: nameAddress, fusion, agentChange, license, deleteOrDraw, other.
+            Note: 'pph' exists in the form but is not supported via API prefill.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactEmail" type="String255">
+        <xs:annotation>
+          <xs:documentation>Contact email for the submission. Required.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactName" type="String255" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Name of contact person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactReference" type="String20" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Internal reference for the submitter.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="contactPhoneNumber" type="String20" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Phone number of contact person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="inquiryMessage" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Free-text message. Main message for requestType 'other', and 'other information' for 'nameAddress'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ipCases" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>IP case/application numbers. At least one is required. For requestType 'goodsAndServices' only the first entry is used.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ipCase" type="String255" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="nameAddress" type="NameAddressType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Name/address change details. Used when requestType is 'nameAddress'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="fusion" type="FusionType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Assignment/merger/division details. Used when requestType is 'fusion'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="agentChange" type="AgentChangeType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Change of representative. Used when requestType is 'agentChange'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="license" type="LicenseType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>License details. Required when requestType is 'license'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="lien" type="LienType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Lien/pledge details. Required when requestType is 'lien'. Not available for domain 'design'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="goodsAndServices" type="GoodsAndServicesType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Limitation of goods/services. Used when requestType is 'goodsAndServices' (trademark only).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="deleteOrDraw" type="DeleteOrDrawType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Withdrawal/deletion details. Used when requestType is 'deleteOrDraw'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- NameAddress Type -->
+  <xs:complexType name="NameAddressType">
+    <xs:sequence>
+      <xs:element name="changeNameAddress" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Existing applicants/owners the change applies to, comma-separated. Each name must match a proprietor/applicant registered on the IP case; values that match nothing are dropped.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="newNameAddress" type="ParticipantType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The updated participant. All participants listed in changeNameAddress are changed to this.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="otherInformation" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Other information. Mapped to the form's free-text message field.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Fusion Type -->
+  <xs:complexType name="FusionType">
+    <xs:sequence>
+      <xs:element name="newApplicants" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>New applicants/owners after the transfer.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="participant" type="ParticipantType" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="fusionOtherInformation" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Other information about the transfer.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- AgentChange Type -->
+  <xs:complexType name="AgentChangeType">
+    <xs:sequence>
+      <xs:element name="agentChangeType" type="AgentChangeTypeEnum" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>'newFromRequestor' = the logged-in user becomes the new agent. 'remove' = the current agent is removed and no new agent is registered.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- License Type -->
+  <xs:complexType name="LicenseType">
+    <xs:sequence>
+      <xs:element name="role" type="LicenseRoleType">
+        <xs:annotation>
+          <xs:documentation>Role of the logged-in submitter. Required. 'licensor', 'licensee' (submitter becomes the first licensee row) or 'agent' (requires representsInLicenseCase).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="representsInLicenseCase" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Which parties the agent represents. Required when role is 'agent'.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="party" type="LicenseRepresentedPartyType" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="regarding" type="LicenseRegardingType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>What the notice concerns.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="licenseType" type="LicenseTypeEnum" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Type of license. Both casings are accepted; the lower-camelCase form is normalized.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="extent" type="LicenseExtentType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Whether the license covers the whole right or only parts of it.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="partsOfTheRightInfo" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Description of which parts of the right the license covers.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="date" type="xs:date" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Date the license agreement was entered into (ISO 8601).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="licensor" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The licensor(s), comma-separated. Must match a proprietor/applicant registered on the IP case.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="licensees" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The licensee(s). When role is 'licensee' the logged-in user is inserted first and these follow after.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="participant" type="ParticipantType" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="otherInformation" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Other information about the license.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Lien Type -->
+  <xs:complexType name="LienType">
+    <xs:sequence>
+      <xs:element name="role" type="LienRoleType">
+        <xs:annotation>
+          <xs:documentation>Role of the logged-in submitter. Required. 'lienee' or 'agent' require lienHolder; 'lienholder' derives the lien holder from the logged-in user and ignores any supplied lienHolder.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="representsInLienCase" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Which parties the agent represents. Required when role is 'agent'.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="party" type="LienRepresentedPartyType" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="lienHolder" type="ParticipantType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The party holding the lien. Required when role is 'lienee' or 'agent'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="lienees" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The party/parties pledging the right, comma-separated. Must match a proprietor/applicant registered on the IP case.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="rightType" type="LienRightType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The type of right being pledged. Allowed values depend on domain:
+            patent: nationalPatentApplication, europeanPatentApplication, grantedPatent, supplementaryProtectionCertificates, transferableAgreementLicense.
+            trademark: nationalTrademarkApplication, registeredTrademark, transferableAgreementLicense.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="regarding" type="LienRegardingType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>What the notice concerns.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="date" type="xs:date" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Date the lien agreement was entered into (ISO 8601).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="totalSize" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Total size of the secured claim in NOK.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="otherInformation" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Other information about the lien.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- GoodsAndServices Type -->
+  <xs:complexType name="GoodsAndServicesType">
+    <xs:sequence>
+      <xs:element name="items" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The classes to delete or change.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="item" type="GoodsAndServicesItemType" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GoodsAndServicesItemType">
+    <xs:sequence>
+      <xs:element name="classNumber" type="ClassNumberType">
+        <xs:annotation>
+          <xs:documentation>Nice class number 1-45. Leading zeros are stripped. The class must exist on the referenced trademark case.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="deleteOrChange" type="DeleteOrChangeType">
+        <xs:annotation>
+          <xs:documentation>'delete' removes the whole class, 'change' replaces its goods/services text with changedText.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="changedText" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The new goods/services text. Required when deleteOrChange is 'change'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- DeleteOrDraw Type -->
+  <xs:complexType name="DeleteOrDrawType">
+    <xs:sequence>
+      <xs:element name="deleteOrDrawChangeType" type="DeleteOrDrawChangeTypeEnum" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>'draw' = withdraw a pending application, 'delete' = delete a granted/registered right.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Participant Type -->
+  <xs:complexType name="ParticipantType">
+    <xs:annotation>
+      <xs:documentation>A person or organization. Supply either person fields (firstName + lastName) or organization fields (companyName and/or companyNumber), never both.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="participantType" type="ParticipantTypeEnum" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Type of participant. If omitted it is inferred from which fields are present.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="firstName" type="String255" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Required for a person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="lastName" type="String255" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Required for a person.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="companyNumber" type="OrgNumberType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Norwegian organization number (9 digits).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="companyName" type="String255" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Required for an organization unless companyNumber is supplied.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="address" type="AddressType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Address Type -->
+  <xs:complexType name="AddressType">
+    <xs:sequence>
+      <xs:element name="streetAddress" type="String255" minOccurs="0"/>
+      <xs:element name="postalCode" type="String155" minOccurs="0"/>
+      <xs:element name="city" type="String255" minOccurs="0"/>
+      <xs:element name="country" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>ISO 3166-1 alpha-2 country code, e.g. 'NO'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Enumerations -->
+  <xs:simpleType name="DomainType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="patent"/>
+      <xs:enumeration value="trademark"/>
+      <xs:enumeration value="design"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="RequestTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="nameAddress"/>
+      <xs:enumeration value="fusion"/>
+      <xs:enumeration value="agentChange"/>
+      <xs:enumeration value="lien"/>
+      <xs:enumeration value="license"/>
+      <xs:enumeration value="goodsAndServices"/>
+      <xs:enumeration value="deleteOrDraw"/>
+      <xs:enumeration value="other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AgentChangeTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="newFromRequestor"/>
+      <xs:enumeration value="remove"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LicenseRoleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="licensor"/>
+      <xs:enumeration value="licensee"/>
+      <xs:enumeration value="agent"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LicenseRepresentedPartyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="licensor"/>
+      <xs:enumeration value="licensee"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LicenseRegardingType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="agreement"/>
+      <xs:enumeration value="agreement3Party"/>
+      <xs:enumeration value="transfer"/>
+      <xs:enumeration value="compolsoryLicense"/>
+      <xs:enumeration value="terminateAgreement"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LicenseTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="exclusive"/>
+      <xs:enumeration value="nonExclusive"/>
+      <xs:enumeration value="soleLicense"/>
+      <xs:enumeration value="compulsoryLicense"/>
+      <xs:enumeration value="Exclusive"/>
+      <xs:enumeration value="NonExclusive"/>
+      <xs:enumeration value="SoleLicense"/>
+      <xs:enumeration value="CompulsoryLicense"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LicenseExtentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="wholeRight"/>
+      <xs:enumeration value="partsOfTheRight"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LienRoleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="lienee"/>
+      <xs:enumeration value="lienholder"/>
+      <xs:enumeration value="agent"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LienRepresentedPartyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="lienee"/>
+      <xs:enumeration value="lienholder"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LienRightType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="nationalPatentApplication"/>
+      <xs:enumeration value="europeanPatentApplication"/>
+      <xs:enumeration value="grantedPatent"/>
+      <xs:enumeration value="supplementaryProtectionCertificates"/>
+      <xs:enumeration value="nationalTrademarkApplication"/>
+      <xs:enumeration value="registeredTrademark"/>
+      <xs:enumeration value="transferableAgreementLicense"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LienRegardingType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="newLienAgreement"/>
+      <xs:enumeration value="transferOfLienAgreement"/>
+      <xs:enumeration value="subLienOfPreviouslyRecordedLien"/>
+      <xs:enumeration value="changesInLien"/>
+      <xs:enumeration value="terminationOfLienAgreement"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DeleteOrChangeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="delete"/>
+      <xs:enumeration value="change"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DeleteOrDrawChangeTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="draw"/>
+      <xs:enumeration value="delete"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ParticipantTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="person"/>
+      <xs:enumeration value="organization"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ClassNumberType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="0?[1-9]|[1-3][0-9]|4[0-5]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- String length restrictions -->
+  <xs:simpleType name="String20">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="String155">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="155"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="String255">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OrgNumberType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{9}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
