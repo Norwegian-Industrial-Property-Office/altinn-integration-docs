@@ -10,6 +10,7 @@ This documentation is for integrators who want to programmatically create forms 
 - [Available Forms](#available-forms)
 - [Creating Instances with Prefill Data](#creating-instances-with-prefill-data)
   - [Example: Creating a Correspondence Instance](#example-creating-a-correspondence-instance)
+  - [Self-Identified (Email) Users](#self-identified-email-users)
   - [Attachments](#attachments)
 - [After Instance Creation](#after-instance-creation)
   - [Validate](#validate)
@@ -137,12 +138,35 @@ Content-Type: application/pdf
 --boundary--
 ```
 
-**What's standard Altinn:** The multipart structure, the `instance` part with owner information, and the general HTTP pattern are standard Altinn 3 instantiation. You can also provide identity numbers instead of `partyId` (see [Altinn docs](https://docs.altinn.studio/en/api/apps/instances/#create-instance)). For self-identified users without a Norwegian national ID, use `{"instanceOwner":{"username":"user@example.no"}}`
+**What's standard Altinn:** The multipart structure, the `instance` part with owner information, and the general HTTP pattern are standard Altinn 3 instantiation. You can also provide identity numbers instead of `partyId` (see [Altinn docs](https://docs.altinn.studio/en/api/apps/instances/#create-instance)). For self-identified users without a Norwegian national ID, see [Self-Identified (Email) Users](#self-identified-email-users).
 
 **What's Patentstyret-specific:**
 - The prefill field name (`{{app}}Data-prefill`) identifies which form's data model to prefill
 - The prefill JSON structure follows the form's schema (see Available Forms table above)
 - Attachment field names (e.g., `fileAttachment-MainLetter`) correspond to data types defined in each form's application metadata, they are found on the swagger page
+
+### Self-Identified (Email) Users
+
+For users who do not have a Norwegian national identity number or organization number, use the `username` field in the `instance` part instead of `partyId`:
+
+```json
+{"instanceOwner":{"username":"test@example.no"}}
+```
+
+Since no national register data is available for these users, the Requestor fields are blank unless you provide them. To populate the Requestor with name and address data, include a submitter object in the prefill payload:
+
+| Form | Prefill object |
+|------|----------------|
+| Trademark (`varemerke`) | `submitter` |
+| Design (`design`) | `submitter` |
+| Ansvarsmerke (`ansvarsmerke`) | `selfIdentifiedSubmitter` |
+| EP-Validering (`ep-validering`) | `submitter` |
+
+Notes:
+- The submitter object is optional. Without it, the Requestor fields will be blank for self-identified users.
+- Provide either a person name (`firstName` + `lastName`) or a `companyName`, plus address fields (`streetAddress`, `postalCode`, `city`, `country`). See each form's JSON Schema for the exact structure.
+- `customerNumber` (where supported) is optional. If you already have a Patentstyret customer number, providing it links the submission to your existing customer record, so no lookup in our system is needed.
+- For users identified by national identity number or organization number, register data takes precedence over the submitter object.
 
 ### Attachments
 

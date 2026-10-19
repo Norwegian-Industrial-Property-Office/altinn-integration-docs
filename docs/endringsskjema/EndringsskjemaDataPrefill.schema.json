@@ -244,7 +244,16 @@
         },
         "totalSize": {
           "type": "string",
-          "description": "Total size of the secured claim in NOK, e.g. 'NOK 5 000 000'."
+          "description": "Total size of the secured claim, e.g. '5000000'. The currency is given in totalSizeCurrency."
+        },
+        "totalSizeCurrency": {
+          "type": "string",
+          "enum": [
+            "NOK", "SEK", "DKK", "ISK", "EUR", "USD", "GBP", "CHF", "JPY", "CNY",
+            "CAD", "AUD", "NZD", "HKD", "SGD", "KRW", "INR", "BRL", "MXN", "ZAR",
+            "PLN", "CZK", "HUF", "TRY", "AED", "SAR", "ILS", "THB", "MYR", "IDR", "TWD"
+          ],
+          "description": "ISO 4217 currency code for totalSize. Defaults to NOK when omitted."
         },
         "otherInformation": {
           "type": "string",

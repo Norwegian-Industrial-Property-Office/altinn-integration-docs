@@ -39,11 +39,8 @@ For organization applicants with `country = "NO"`, `companyNumber` is required.
 ## Contact Name
 - `contactName` can be provided for contact person name (for example when submitting as an organization).
 
-## Submitter (Self-Identified Users)
-For email/username-based instance owner (self-identified users), you can provide:
-- `submitter.firstName` + `submitter.lastName`, or `submitter.companyName`
-- and address fields (`streetAddress`, `postalCode`, `city`, `country`)
-This is used to populate requestor/contact identity in the form flow.
+## Self-Identified (Email) Users
+See [Self-Identified (Email) Users](../../README.md#self-identified-email-users) in the main README. This form uses the `submitter` object.
 
 ## Contact Reference
 `contactReference` is the earlier reference from NIPO (if available).

@@ -15,15 +15,9 @@ Use the Swagger options endpoint to look up valid country codes:
 `GET /pat/design/api/options/countries?language=nb`
 - Use the returned `value` in the prefill data model, not the `label`
 
-## Email User Instantiation (Self-Identified)
+## Self-Identified (Email) Users
 
-For users who do not have a Norwegian national identity number or organization number, use the `username` field in the `instance` part instead of `partyId`:
-```json
-{"instanceOwner":{"username":"test@example.no"}}
-```
-To populate the Requestor with actual name and address data, include a `submitter` object in the prefill payload.
-Notes:
-- `submitter.customerNumber` is optional and sets the customer number directly without a SANT lookup.
+See [Self-Identified (Email) Users](../../README.md#self-identified-email-users) in the main README. This form uses the `submitter` object.
 
 ## Attachments
 
