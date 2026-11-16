@@ -183,7 +183,7 @@
             </xs:element>
             <xs:element name="submitter" type="tns:PrefillSubmitter" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Optional submitter identity. Used to populate requestor details in some submitter scenarios.</xs:documentation>
+                    <xs:documentation>Optional submitter (requestor) data for self-identified (email) users, since no national register data is available. Ignored for person/org users, where register data is used.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>

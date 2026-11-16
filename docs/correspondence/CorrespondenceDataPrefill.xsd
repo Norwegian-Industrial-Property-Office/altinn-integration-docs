@@ -7,7 +7,7 @@
   <xs:annotation>
     <xs:documentation>
       Simplified data model for consumers to prefill the Correspondence form via multipart instantiation.
-      Requestor is not included - it is automatically filled from the logged-in user via ER/DSF registers.
+      The Requestor is filled from the logged-in user via ER/DSF registers. For self-identified (email) users, use the optional submitter object.
     </xs:documentation>
   </xs:annotation>
 
@@ -50,6 +50,55 @@
       <xs:element name="ipCases" type="tns:IpCasesType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>List of IP case identifiers (application numbers, IP right numbers, etc.)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="submitter" type="tns:PrefillSubmitter" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional submitter (requestor) data for self-identified (email) users, since no national register data is available. Ignored for person/org users, where register data is used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Submitter Type -->
+  <xs:complexType name="PrefillSubmitter">
+    <xs:annotation>
+      <xs:documentation>Submitter identity. Provide either firstName + lastName or companyName, together with streetAddress, postalCode, city, and country.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="firstName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>First name. Used together with lastName for person submitters.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="lastName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Last name. Used together with firstName for person submitters.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="companyName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Company name. Alternative to firstName + lastName for organization submitters.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="streetAddress" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Street address</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="postalCode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Postal/ZIP code</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="city" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>City name</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="country" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Country code. Use the returned value from the countries options endpoint; labels are display text only.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>

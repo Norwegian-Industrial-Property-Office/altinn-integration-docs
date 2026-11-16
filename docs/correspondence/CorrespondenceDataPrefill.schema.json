@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "CorrespondenceDataPrefill.schema.json",
   "title": "correspondenceData-prefill",
-  "description": "Simplified data model for consumers to prefill the Correspondence form via multipart instantiation. Requestor is not included - it is automatically filled from the logged-in user via ER/DSF registers.",
+  "description": "Simplified data model for consumers to prefill the Correspondence form via multipart instantiation. The Requestor is filled from the logged-in user via ER/DSF registers. For self-identified (email) users, use the optional submitter object.",
   "type": "object",
   "required": ["inquiryMessage", "domain", "contactEmail"],
   "properties": {
@@ -38,6 +38,51 @@
       "items": {
         "type": "string"
       }
+    },
+    "submitter": {
+      "$ref": "#/$defs/PrefillSubmitter",
+      "description": "Optional submitter (requestor) data for self-identified (email) users, since no national register data is available. Ignored for person/org users, where register data is used."
+    }
+  },
+  "$defs": {
+    "PrefillSubmitter": {
+      "type": "object",
+      "description": "Submitter identity. Provide either firstName + lastName or companyName, together with streetAddress, postalCode, city, and country.",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "First name. Used together with lastName for person submitters."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name. Used together with firstName for person submitters."
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name. Alternative to firstName + lastName for organization submitters."
+        },
+        "streetAddress": {
+          "type": "string",
+          "description": "Street address"
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal/ZIP code"
+        },
+        "city": {
+          "type": "string",
+          "description": "City name"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code. Use the returned value from the countries options endpoint; labels are display text only."
+        }
+      },
+      "required": ["streetAddress", "postalCode", "city", "country"],
+      "anyOf": [
+        { "required": ["firstName", "lastName"] },
+        { "required": ["companyName"] }
+      ]
     }
   }
 }

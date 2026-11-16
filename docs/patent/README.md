@@ -23,7 +23,7 @@ Use the options endpoints to fetch valid codes before building prefill payloads.
 | Prefill field | Use codes from |
 |---|---|
 | `applicantsAndInventors[].country` | `countries` |
-| `submitterIdentity.country` | `countries` |
+| `submitter.country` | `countries` |
 | `earlierApplications[].country` | `priorityCountries` |
 
 ### Important
@@ -51,3 +51,7 @@ For `earlierApplications[].country`, the code list may include authorities (for 
 
 Attachments are included as additional parts in the multipart/form-data request. 
 The part name must match a data type defined in the form's application metadata (e.g., `fileAttachment-descriptionFiles`).
+
+## Self-Identified (Email) Users
+
+See [Self-Identified (Email) Users](../../README.md#self-identified-email-users) in the main README. This form uses the `submitter` object.

@@ -124,7 +124,7 @@
     },
     "submitter": {
       "$ref": "#/definitions/PrefillSubmitter",
-      "description": "Optional submitter identity. Used to populate requestor details in some submitter scenarios."
+      "description": "Optional submitter (requestor) data for self-identified (email) users, since no national register data is available. Ignored for person/org users, where register data is used."
     }
   },
   "allOf": [

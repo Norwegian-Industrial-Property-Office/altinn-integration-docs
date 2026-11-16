@@ -38,3 +38,7 @@ See the [main README](../../README.md#creating-instances-with-prefill-data) for 
 
 ### Options
 To get valid countries use the countries optionsId and select langauge, either `nb` or `en`
+
+## Self-Identified (Email) Users
+
+See [Self-Identified (Email) Users](../../README.md#self-identified-email-users) in the main README. This form uses the `submitter` object.

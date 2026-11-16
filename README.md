@@ -157,6 +157,8 @@ Since no national register data is available for these users, the Requestor fiel
 
 | Form | Prefill object |
 |------|----------------|
+| Patent (`patent`) | `submitter` |
+| Correspondence (`correspondence`) | `submitter` |
 | Trademark (`varemerke`) | `submitter` |
 | Design (`design`) | `submitter` |
 | Ansvarsmerke (`ansvarsmerke`) | `selfIdentifiedSubmitter` |
@@ -167,6 +169,7 @@ Notes:
 - Provide either a person name (`firstName` + `lastName`) or a `companyName`, plus address fields (`streetAddress`, `postalCode`, `city`, `country`). See each form's JSON Schema for the exact structure.
 - `customerNumber` (where supported) is optional. If you already have a Patentstyret customer number, providing it links the submission to your existing customer record, so no lookup in our system is needed.
 - For users identified by national identity number or organization number, register data takes precedence over the submitter object.
+- Correspondence: the search for the user's own cases is not available for self-identified users, but cases can still be prefilled with `ipCases`. If `contactName` is omitted, the contact name is set from the submitter's `firstName` + `lastName`.
 
 ### Attachments
 
