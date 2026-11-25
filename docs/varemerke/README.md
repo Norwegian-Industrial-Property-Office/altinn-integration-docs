@@ -4,7 +4,16 @@
 
 The varemerke prefill payload is sent as the `varemerkeData-prefill` multipart part with content type `application/json`.
 
-Available schema files:
+Download the schema from the form, so you get the version that is deployed (no token needed):
+
+| | TT02 | Production |
+|---|---|---|
+| JSON Schema | [api/jsonschema/varemerkeData-prefill](https://pat.apps.tt02.altinn.no/pat/varemerke/api/jsonschema/varemerkeData-prefill) | [api/jsonschema/varemerkeData-prefill](https://pat.apps.altinn.no/pat/varemerke/api/jsonschema/varemerkeData-prefill) |
+| XSD | [api/xsdschema/varemerkeData-prefill](https://pat.apps.tt02.altinn.no/pat/varemerke/api/xsdschema/varemerkeData-prefill) | Not yet; use the copy below |
+
+In [Swagger](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html), the definition "End user app API for pat/varemerke" links to the JSON Schema from the section `FormData varemerkeData-prefill`. See [Downloading the Prefill Schema from the Form](../../README.md#downloading-the-prefill-schema-from-the-form).
+
+Copies in this repository:
 
 - [JSON Schema](VaremerkeDataPrefill.schema.json)
 - ( [XSD](VaremerkeDataPrefill.xsd) )

@@ -8,10 +8,12 @@ This documentation is for integrators who want to programmatically create forms 
 - [Environments](#environments)
   - [Testing in TT02](#testing-in-tt02)
 - [Available Forms](#available-forms)
+  - [Downloading the Prefill Schema from the Form](#downloading-the-prefill-schema-from-the-form)
 - [Creating Instances with Prefill Data](#creating-instances-with-prefill-data)
   - [Example: Creating a Correspondence Instance](#example-creating-a-correspondence-instance)
   - [Self-Identified (Email) Users](#self-identified-email-users)
   - [Attachments](#attachments)
+  - [Responses and Errors](#responses-and-errors)
 - [After Instance Creation](#after-instance-creation)
   - [Validate](#validate)
   - [Open the form in Browser](#open-the-form-in-browser)
@@ -40,13 +42,30 @@ Each form has a unique prefill data model used when creating instances. The pref
 | Correspondence        | `correspondence`  | [TT02](https://pat.apps.tt02.altinn.no/pat/correspondence/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/correspondence/swagger/index.html)                           | `correspondenceData-prefill` | [JSON](docs/correspondence/CorrespondenceDataPrefill.schema.json) ([XSD](docs/correspondence/CorrespondenceDataPrefill.xsd))     | [Docs](docs/correspondence/)     |
 | Patent                | `patent`          | [TT02](https://pat.apps.tt02.altinn.no/pat/patent/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/patent/swagger/index.html)                                           | `patentData-prefill`         | [JSON](docs/patent/PatentDataPrefill.schema.json) ([XSD](docs/patent/PatentDataPrefill.xsd))                                     | [Docs](docs/patent/README.md)    |
 | Design                | `design`          | [TT02](https://pat.apps.tt02.altinn.no/pat/design/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/design/swagger/index.html)                                           | `designData-prefill`         | [JSON](docs/design/DesignDataPrefill.schema.json) ([XSD](docs/design/DesignDataPrefill.xsd))                                     | [Docs](docs/design/)             |
-| Trademark             | `varemerke`       | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)                                     | `varemerkeData-prefill`      | [JSON](docs/varemerke/VaremerkeDataPrefill.schema.json) ([XSD](docs/varemerke/VaremerkeDataPrefill.xsd))                         | [Docs](docs/varemerke/README.md) |
+| Trademark             | `varemerke`       | [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/varemerke/swagger/index.html)                                     | `varemerkeData-prefill`      | From the form: JSON [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/api/jsonschema/varemerkeData-prefill) / [Prod](https://pat.apps.altinn.no/pat/varemerke/api/jsonschema/varemerkeData-prefill), XSD [TT02](https://pat.apps.tt02.altinn.no/pat/varemerke/api/xsdschema/varemerkeData-prefill). Copy: [JSON](docs/varemerke/VaremerkeDataPrefill.schema.json) ([XSD](docs/varemerke/VaremerkeDataPrefill.xsd)) | [Docs](docs/varemerke/README.md) |
 | Ansvarsmerke          | `ansvarsmerke`    | [TT02](https://pat.apps.tt02.altinn.no/pat/ansvarsmerke/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/ansvarsmerke/swagger/index.html)                               | `ansvarsmerkeData-prefill`   | [JSON](docs/ansvarsmerke/AnsvarsmerkeDataPrefill.schema.json) ([XSD](docs/ansvarsmerke/AnsvarsmerkeDataPrefill.xsd))             | [Docs](docs/ansvarsmerke/README.md) |
 | Endringsskjema        | `endringsskjema`  | [TT02](https://pat.apps.tt02.altinn.no/pat/endringsskjema/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/endringsskjema/swagger/index.html)                           | `endringsskjemaData-prefill` | [JSON](docs/endringsskjema/EndringsskjemaDataPrefill.schema.json) ([XSD](docs/endringsskjema/EndringsskjemaDataPrefill.xsd))     | [Docs](docs/endringsskjema/README.md) |
 | EP-Validering         | `ep-validering`   | [TT02](https://pat.apps.tt02.altinn.no/pat/ep-validering/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/ep-validering/swagger/index.html)                             | `epValideringData-prefill`   | [JSON](docs/ep-validation/EpValideringDataPrefill.schema.json) ([XSD](docs/ep-validation/EpValideringDataPrefill.xsd))         | [Docs](docs/ep-validation/README.md) |
 | Klagesaker            | `klagesaker-op`   | [TT02](https://pat.apps.tt02.altinn.no/pat/klagesaker-op/swagger/index.html) / [Prod](https://pat.apps.altinn.no/pat/klagesaker-op/swagger/index.html)                             | `klagesaker-opData-prefill`  | [JSON](docs/klagesaker-op/OPDataPrefill.schema.json) ([XSD](docs/klagesaker-op/OPDataPrefill.xsd))                               | [Docs](docs/klagesaker-op/README.md) |
 
 > **Note:** the **JSON Schema is the authoritative source**. The XSD is provided for documentation and XML-oriented tooling but does not express all conditional validation rules (e.g., role-dependent required fields). Always validate against the JSON Schema.
+
+### Downloading the Prefill Schema from the Form
+
+Forms that list "From the form" in the table above serve their prefill schema themselves, so you always get the version that is deployed in that environment. No token is needed:
+
+```
+GET {{basePath}}/pat/{{app}}/api/jsonschema/{{prefillFieldName}}
+GET {{basePath}}/pat/{{app}}/api/xsdschema/{{prefillFieldName}}
+```
+
+- `{{prefillFieldName}}` is the "Prefill Schema Field Name" from the table, the same name you use for the multipart part. Example: `GET https://pat.apps.altinn.no/pat/varemerke/api/jsonschema/varemerkeData-prefill`.
+- In Swagger, open the definition "End user app API for pat/{{app}}". The section `FormData {{prefillFieldName}}` links to the JSON Schema. The same endpoints are also listed as `GET /{org}/{app}/api/jsonschema/{id}` and `GET /{org}/{app}/api/xsdschema/{id}` under `Resource` in the "Altinn App API" definition.
+- The `Schemas` list in Swagger also shows a model with the same fields, generated from the code. It does not show the required fields or the allowed text values, so use the JSON Schema.
+- The JSON Schema is returned with `Content-Type: text/plain`. Save the body as a `.schema.json` file.
+- Production does not serve the XSD yet. Use the copy in this repository until it does.
+
+For the other forms, use the copies in this repository. They will move to "From the form" over time.
 
 ## Environments
 
@@ -77,6 +96,8 @@ https://pat.apps.tt02.altinn.no/pat/patent#/instance/51841311/2320f06c-47a1-4b52
                                                        ^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                                        partyId  instanceGuid
 ```
+
+Forms on Altinn v9 have the same path without `#`: `https://pat.apps.tt02.altinn.no/pat/patent/instance/51841311/...`.
 
 Example test credentials:
 
@@ -206,17 +227,50 @@ Content-Type: application/pdf
 - You can upload multiple files to the same data type (up to the max allowed number) by repeating the part with different filenames
 - Uploading to a data type not prefixed with `fileAttachment-` or exceeding the allowed count will be rejected
 
+### Responses and Errors
+
+| Status | Meaning | What to do |
+|--------|---------|------------|
+| `201 Created` | The instance was created. The body is the instance JSON. | Save `id` (`{{instanceOwnerPartyId}}/{{instanceGuid}}`). |
+| `400 Bad Request` | The request or the prefill data is invalid: it does not match the schema, required fields are missing, or an attachment has the wrong data type, MIME type or count. | Fix the request and send it again. |
+| `401` / `403` | The token is missing or invalid, or the party has no access to the form. | Check the token and the `instanceOwner`. |
+| `500 Internal Server Error` | The instance could not be created or set up. | On Altinn v9, read `recommendedAction` (see below). Otherwise, try again later or contact Patentstyret. |
+
+#### Instance creation on Altinn v9
+
+Patentstyret's forms are moving to [Altinn v9](https://docs.altinn.studio/nb/altinn-studio/v9/new-in-v9/). The request format and the prefill schemas stay the same. What changes is how instance creation can fail: on v9, the app stores the instance first and then sets it up in a separate workflow engine. If the setup fails, the `500` response is [Problem Details](https://www.rfc-editor.org/rfc/rfc9457) with fields that tell you whether you can safely send the request again:
+
+```json
+{
+  "title": "Instance initialization failed.",
+  "status": 500,
+  "detail": "Runtime created the instance, but the initial workflow was not accepted by the workflow engine. The created instance was deleted, so the client can safely retry instance creation.",
+  "initializationState": "workflowNotAccepted",
+  "recommendedAction": "retryInstanceCreation",
+  "instanceDeleted": true,
+  "instanceId": "51109100/2320f06c-47a1-4b52-83b4-5c4dc13c65b7"
+}
+```
+
+| `recommendedAction` | What happened | What to do |
+|---------------------|---------------|------------|
+| `retryInstanceCreation` | The instance was deleted (`instanceDeleted: true`). | Send the request again. |
+| `inspectInstance` | An instance may exist (`instanceId`). | Look it up with `GET {{basePath}}/pat/{{app}}/instances/{instanceId}` before you send the request again, so you don't create a duplicate. Delete it if you don't want to use it. |
+| `resumeCurrentTask` | The instance exists, but the setup failed. | Do not create a new instance. Call `resumeEndpoint` (`POST .../process/resume`) later. If it keeps failing, contact Patentstyret with the `instanceId`. |
+
+Instance creation can also take longer on v9, because the request waits for the setup to finish. If your HTTP client times out, the instance may still have been created. List the party's active instances with `GET {{basePath}}/pat/{{app}}/instances/{{instanceOwnerPartyId}}/active` before you try again.
+
 
 ## After Instance Creation
 
 Creating an instance initializes the form data with your prefill values. You can then:
 
  ### Validate
- Validate the instance using the [Altinn Validation API](https://docs.altinn.studio/en/api/apps/validation/) to check that all required data is present and valid
+ Validate the instance using the [Altinn Validation API](https://docs.altinn.studio/en/api/apps/validation/) to check that all required data is present and valid: `GET {{basePath}}/pat/{{app}}/instances/{{instanceOwnerPartyId}}/{{instanceGuid}}/validate`. An empty array means the instance is valid. Use this endpoint rather than `.../data/{dataGuid}/validate`, which Altinn v9 removes.
 
 ### Open the form in Browser
 
-Open the form in the browser to complete and submit it. The user must open the form in a browser to review, complete, and submit it. After a successful instance creation you'll get the instance JSON back.\n
+Open the form in the browser to complete and submit it. The user must open the form in a browser to review, complete, and submit it. After a successful instance creation you'll get the instance JSON back.
    **Use the `selfLinks.apps` URL from the response**
 
    In the instance JSON response, find the `selfLinks.apps` value:
@@ -230,6 +284,8 @@ Open the form in the browser to complete and submit it. The user must open the f
    ```
    {{basePath}}/pat/{{app}}/#/instance/{{instanceOwnerPartyId}}/{{instanceGuid}}
    ```
+
+   Forms on Altinn v9 use the same path without `#`: `{{basePath}}/pat/{{app}}/instance/{{instanceOwnerPartyId}}/{{instanceGuid}}`. They redirect `#/instance` links to the new address, so the link above works on both versions.
 
 
 ## Further Reading

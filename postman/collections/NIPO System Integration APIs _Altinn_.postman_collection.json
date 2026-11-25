@@ -54,7 +54,7 @@
                 }
               ]
             },
-            "description": "Retrieves a test user token for local development.\n\n**Prerequisites:**\n- app-localtest must be running on localhost:5005"
+            "description": "Retrieves a test user token for local development.\n\n**Prerequisites:**\n- localtest must be running (`studioctl env up` serves it on http://local.altinn.cloud:8000)"
           },
           "response": []
         },
